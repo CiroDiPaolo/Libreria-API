@@ -22,9 +22,11 @@ public class Review {
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id_usuario")
+    @JoinColumn(name = "idUsuario")
     private User user;
 
-    //private Multimedia multimedia;
+    @ManyToOne
+    @JoinColumn(name = "idBook")
+    private Book book;
 
 }
