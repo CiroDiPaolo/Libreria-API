@@ -22,6 +22,6 @@ rad.json
 TestResults.xml
 # Ignorar configuración de IntelliJ IDEA
 .idea/
-# Ignorar todo el contenido de la carpeta target
+# Ignorar carpeta target
 /target/
 
