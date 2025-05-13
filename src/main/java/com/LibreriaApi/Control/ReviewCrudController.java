@@ -1,7 +1,6 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.Review;
-import com.LibreriaApi.Repository.ReviewRepository;
 import com.LibreriaApi.Service.ReviewCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,7 @@ public class ReviewCrudController {
 
     }
 
-    @GetMapping("/all/{}")
+    @GetMapping("/all/{id}")
     public Iterable<Review> getAllReviewsOfABook(@PathVariable Long id) {
 
         return reviewCrudService.getAllReviewsOfABookService(id);

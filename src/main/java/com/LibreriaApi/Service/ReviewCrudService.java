@@ -24,7 +24,7 @@ public class ReviewCrudService {
 
     public Iterable<Review> getAllReviewsOfABookService(Long id) {
 
-        return reviewRepository.findByMultimedia(id);
+        return reviewRepository.findByMultimedia_Id(id);
 
     }
 
