@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public abstract class Multimedia {
     private Category category;
 
     @NotBlank(message = "La descripcion no puede estar en blanco")
+    @Size(max = 150, message = "La descripcion no puede exceder los 150 caracteres")
     @Column(name = "descripcion", length = 150)
     private String description;
 
