@@ -2,7 +2,9 @@ package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Category;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,11 +30,12 @@ public abstract class Multimedia {
     @Column(name = "category", length = 20)
     private Category category;
 
-    @NotNull(message = "La descripción no puede ser nula")
+    @NotBlank(message = "La descripcion no puede estar en blanco")
     @Column(name = "descripcion", length = 150)
     private String description;
 
     @NotNull(message = "La fecha de lanzamiento no puede ser nula")
+    @PastOrPresent(message = "La fecha no puede ser futura")
     @Column(name = "releaseDate")
     @Temporal(TemporalType.DATE)
     private Date releaseDate;
