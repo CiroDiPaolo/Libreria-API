@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table( name = "Usuarios")
+@Table( name = "User")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column( name = "idUsuario")
+    @Column( name = "idUser")
     private Long id;
 
     @NotNull(message = "El nombre de usuario no puede ser nulo")

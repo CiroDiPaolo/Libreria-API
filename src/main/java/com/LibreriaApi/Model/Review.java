@@ -26,7 +26,7 @@ public class Review {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "idBook")
-    private Book book;
+    @JoinColumn(name = "idMultimedia")
+    private Multimedia multimedia;
 
 }
