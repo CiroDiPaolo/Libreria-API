@@ -4,17 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5160e9dd-55db-41e0-8422-2ee9f1592bd3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/CRUD-libros.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/Book.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/Review.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Repository/BookRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Repository/BookRepository.java" afterDir="false" />
+    <list default="true" id="5160e9dd-55db-41e0-8422-2ee9f1592bd3" name="Changes" comment=".">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Control/ReviewCrudController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Control/ReviewCrudController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Repository/ReviewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Repository/ReviewRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Service/BookCrudService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Service/BookCrudService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Service/ReviewCrudService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/LibreriaApi/Service/ReviewCrudService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Control/ReviewCrudController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Control/ReviewCrudController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Book.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Book.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/BookStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/BookStage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/LogInRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/LogInRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Multimedia.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Multimedia.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Review.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/Review.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Service/BookCrudService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Service/BookCrudService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Service/BookStageService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/LibreriaApi/Service/BookStageService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,15 +44,22 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2x1I8ube3jphr6tsIjpG5dZwkVF" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.CrudLibrosApplication.executor": "Run",
-    "git-widget-placeholder": "ludmila",
+    "git-widget-placeholder": "ciro",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/estudiante/Desktop/Libreria-API",
     "node.js.detected.package.eslint": "true",
