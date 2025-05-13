@@ -24,7 +24,7 @@ public class ReviewCrudService {
 
     public Iterable<Review> getAllReviewsOfABookService(Long id) {
 
-        return reviewRepository.findByBookId(id);
+        return reviewRepository.findByMultimedia(id);
 
     }
 
@@ -60,7 +60,7 @@ public class ReviewCrudService {
             Review updatedReview = op.get();
 
             if(updatedReview.getIdReview() == review.getIdReview() ||
-                    updatedReview.getBook() == review.getBook() ||
+                    updatedReview.getMultimedia() == review.getMultimedia() ||
                     updatedReview.getUser() == review.getUser()){
 
                 reviewRepository.save(review);

@@ -26,13 +26,13 @@ public class BookCrudService {
 
     public Iterable<Book> getAllBooksService() { return bookRepository.findAll(); }
 
-    public Optional<Book> getBooksByTitleService(String titulo) { return bookRepository.findByTitulo(titulo); }
+    public Optional<Book> getBooksByTitleService(String titulo) { return bookRepository.findByTitle(titulo); }
 
     public Optional<Book> getBooksByISBNService(String isbn) { return bookRepository.findByISBN(isbn); }
 
-    public Optional<Book> getBooksByAutorService(String autor) { return bookRepository.findByAutor(autor); }
+    public Optional<Book> getBooksByAutorService(String autor) { return bookRepository.findByAuthor(autor); }
 
-    public Optional<Book> getBooksByEditorialService(String editorial) { return bookRepository.findByEditorial(editorial); }
+    public Optional<Book> getBooksByEditorialService(String editorial) { return bookRepository.findBypublishingHouse(editorial); }
 
     //METODOS DELETE
     public void deleteBookService(Long id) {
