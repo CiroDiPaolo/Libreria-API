@@ -38,11 +38,13 @@ public class Review {
     @Column(name = "status")
     private Boolean status;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "idUser")
     @Valid
     private User user;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "idMultimedia")
     @Valid
