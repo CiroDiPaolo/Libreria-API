@@ -20,3 +20,8 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+# Ignorar configuración de IntelliJ IDEA
+.idea/
+# Ignorar todo el contenido de la carpeta target
+/target/
+
