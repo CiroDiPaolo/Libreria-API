@@ -1,6 +1,6 @@
 package com.LibreriaApi.Service;
 
-import com.LibreriaApi.Model.User;
+import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ public class RegisterService {
     @Autowired
     private UserRepository userRepository;
 
-    public void registerService(User user) {
+    public void registerService(UserEntity user) {
 
         userRepository.save(user);
 

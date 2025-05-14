@@ -42,7 +42,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "idUser")
     @Valid
-    private User user;
+    private UserEntity user;
 
     @NotNull
     @ManyToOne

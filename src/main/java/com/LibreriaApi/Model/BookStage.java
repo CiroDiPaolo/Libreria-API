@@ -19,7 +19,7 @@ public class BookStage {
     @ManyToOne
     @JoinColumn(name = "idUser", referencedColumnName = "idUser")
     @Valid
-    private User user;
+    private UserEntity user;
 
     @NotNull(message = "El libro no puede ser nulo")
     @ManyToOne

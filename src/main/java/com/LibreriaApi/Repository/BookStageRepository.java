@@ -1,7 +1,6 @@
 package com.LibreriaApi.Repository;
 import java.util.List;
 import com.LibreriaApi.Model.BookStage;
-import com.LibreriaApi.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
