@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// CREDENTIAL QUEDA EN DESUSO
 @Entity
 @Table(name="Credential")
 @Data

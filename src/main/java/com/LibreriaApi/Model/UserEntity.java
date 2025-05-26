@@ -1,5 +1,6 @@
 package com.LibreriaApi.Model;
 
+import com.LibreriaApi.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -35,9 +36,14 @@ public class UserEntity {
     @Column( name = "email", length = 30)
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "credencial_id", referencedColumnName = "idCredential")
-    private Credential credential;
+    @NotNull(message = "El rol no puede ser nulo")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 20)
+    private Role role;
+
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "credencial_id", referencedColumnName = "idCredential")
+//    private Credential credential;
 
     @Override
     public String toString() {
