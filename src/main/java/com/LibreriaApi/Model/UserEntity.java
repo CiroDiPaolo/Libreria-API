@@ -25,9 +25,9 @@ public class UserEntity {
     private String username;
 
     @NotBlank(message = "La contraseña no puede ser nula")
-    @Size(min = 6, max = 20, message = "La contraseña debe tener entre 6 y 20 caracteres")
+    //@Size(min = 6, max = 20, message = "La contraseña debe tener entre 6 y 20 caracteres")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "La contraseña debe tener al menos una mayúscula, una minúscula y un número")
-    @Column( name = "pass", length = 20)
+    @Column( name = "pass")
     private String pass;
 
     @NotNull(message = "El email no puede ser nulo")

@@ -1,7 +1,6 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Enums.Role;
-import com.LibreriaApi.Model.Credential;
 import com.LibreriaApi.Model.LogInRequest;
 import com.LibreriaApi.Model.SignUpRequest;
 import com.LibreriaApi.Model.UserEntity;
@@ -36,6 +35,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> authSignUp(@RequestBody @Valid SignUpRequest request) {
         try {
+            System.out.println("Entrando a /auth/register...");
             if (userRepository.existsByEmail(request.getEmail())) {
                 // ESTO LO ARREGLA THE BREAKBALLS (meli)
                 throw new RuntimeException("El email ya está registrado");
@@ -53,7 +53,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
 
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tiraste fruta");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tiraste fruta" + e.getMessage());
         }
     }
 
