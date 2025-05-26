@@ -1,5 +1,6 @@
 package com.LibreriaApi.Model;
 
+import com.LibreriaApi.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class UserEntity {
     private String username;
 
     @NotBlank(message = "La contraseña no puede ser nula")
-    @Size(min = 6, max = 20, message = "La contraseña debe tener entre 6 y 20 caracteres")
+    //@Size(min = 6, max = 20, message = "La contraseña debe tener entre 6 y 20 caracteres")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "La contraseña debe tener al menos una mayúscula, una minúscula y un número")
-    @Column( name = "pass", length = 20)
+    @Column( name = "pass")
     private String pass;
 
     @NotNull(message = "El email no puede ser nulo")
@@ -35,9 +36,14 @@ public class UserEntity {
     @Column( name = "email", length = 30)
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "credencial_id", referencedColumnName = "idCredential")
-    private Credential credential;
+    @NotNull(message = "El rol no puede ser nulo")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 20)
+    private Role role;
+
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "credencial_id", referencedColumnName = "idCredential")
+//    private Credential credential;
 
     @Override
     public String toString() {
