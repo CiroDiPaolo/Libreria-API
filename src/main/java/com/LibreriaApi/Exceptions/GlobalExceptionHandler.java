@@ -1,6 +1,7 @@
 package com.LibreriaApi.Exceptions;
 
 import com.LibreriaApi.Model.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,4 +36,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(messages);
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
+        List<String> errors = ex.getConstraintViolations()
+                .stream()
+                .map(cv -> cv.getPropertyPath() + ": " + cv.getMessage())
+                .toList();
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+
 }
