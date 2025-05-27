@@ -16,4 +16,10 @@ public class GlobalExceptionHandler {
         ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(entityNotFound, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BookStageNotFoundException.class)
+    public ResponseEntity<?> handlerEntityNotFoundException(BookStageNotFoundException exception){
+        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
+        return new ResponseEntity<>(entityNotFound, HttpStatus.NOT_FOUND);
+    }
 }
