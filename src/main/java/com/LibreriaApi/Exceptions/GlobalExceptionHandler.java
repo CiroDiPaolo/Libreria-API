@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(entityNotFound, HttpStatus.NOT_FOUND);
     }
 
+    //Se lanza cuando un DTO con @Valid falla la validación
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> messages = ex.getBindingResult()
@@ -39,6 +40,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(messages);
     }
 
+    //Se lanza cuando validás con @Validated en parámetros simples del controller
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
         List<String> errors = ex.getConstraintViolations()
@@ -48,14 +50,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    //Se lanza cuando el cuerpo JSON está mal formado o tiene un tipo incorrecto
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleBadJson(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body("JSON mal formado o con tipos incorrectos");
     }
 
+    // Se lanza cuando falta un @RequestParam obligatorio
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleMissingParam(MissingServletRequestParameterException ex) {
         String msg = "Falta el parámetro obligatorio: " + ex.getParameterName();
         return ResponseEntity.badRequest().body(msg);
     }
+
+
 }
