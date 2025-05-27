@@ -1,6 +1,6 @@
 package com.LibreriaApi.Service;
 
-import com.LibreriaApi.Exceptions.EntityNotFound;
+import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Repository.BookRepository;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class BookCrudService {
 
     public Book getBookService(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFound("Libro no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
     }
 
     public Iterable<Book> getAllBooksService() { return bookRepository.findAll(); }
@@ -46,7 +46,7 @@ public class BookCrudService {
 
         } else {
 
-            throw new EntityNotFound("El libro no existe");
+            throw new EntityNotFoundException("El libro no existe");
 
         }
     }
@@ -65,7 +65,7 @@ public class BookCrudService {
 
         } else {
 
-            throw new EntityNotFound("El libro no existe");
+            throw new EntityNotFoundException("El libro no existe");
 
         }
 
