@@ -1,5 +1,6 @@
 package com.LibreriaApi.Service;
 
+import com.LibreriaApi.Exceptions.BookStageNotFoundException;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Repository.BookStageRepository;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class BookStageService {
 
     public BookStage getBookStageService(Long id) {
         return bookStageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró el stage para el libro " + id));
+                .orElseThrow(() -> new BookStageNotFoundException("No se encontró el stage para el libro " + id));
     }
 
     public List<BookStage> getAllBookStagesService() {
@@ -56,7 +57,7 @@ public class BookStageService {
         if (existing.isPresent()) {
             bookStageRepository.save(bookStage);
         } else {
-            throw new RuntimeException("No se encontró un estado para el id: " + bookStage.getId());
+            throw new BookStageNotFoundException("No se encontró un estado para el id: " + bookStage.getId());
         }
     }
 
@@ -65,7 +66,7 @@ public class BookStageService {
         if (bookStage.isPresent()) {
             bookStageRepository.deleteById(id);
         } else {
-            throw new RuntimeException("no se encontró un estado para eliminar para el id: " + id);
+            throw new BookStageNotFoundException("no se encontró un estado para eliminar para el id: " + id);
         }
     }
 }
