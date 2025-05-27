@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,13 +18,13 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handlerEntityNotFoundException(EntityNotFoundException exception){
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException exception){
         ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(entityNotFound, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BookStageNotFoundException.class)
-    public ResponseEntity<?> handlerEntityNotFoundException(BookStageNotFoundException exception){
+    public ResponseEntity<?> handleEntityNotFoundException(BookStageNotFoundException exception){
         ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(entityNotFound, HttpStatus.NOT_FOUND);
     }
@@ -63,5 +64,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(msg);
     }
 
+    //Se lanza cuando se hace un request con metodo HTTP incorrecto
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleWrongMethod(HttpRequestMethodNotSupportedException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Metodo no permitido");
+    }
 
 }
