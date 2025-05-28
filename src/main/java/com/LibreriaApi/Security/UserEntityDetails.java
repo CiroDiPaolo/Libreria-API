@@ -28,7 +28,7 @@ public class UserEntityDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     // Los demás métodos devuelven true (cuenta no expirada, etc.)
