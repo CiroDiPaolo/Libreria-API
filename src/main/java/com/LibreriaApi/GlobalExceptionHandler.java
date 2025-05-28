@@ -1,5 +1,7 @@
-package com.LibreriaApi.Exceptions;
+package com.LibreriaApi;
 
+import com.LibreriaApi.Exceptions.BookStageNotFoundException;
+import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
