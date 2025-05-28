@@ -30,12 +30,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Necesario para permitir POST/PUT desde Postman o frontend JS
-                .httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // permití el login REST
-                        .requestMatchers("/libros/**").permitAll()
-                        .anyRequest().authenticated() // el resto requiere autenticación
+                        .anyRequest().permitAll()
                 );
 
         return http.build();
