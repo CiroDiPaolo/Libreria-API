@@ -1,6 +1,6 @@
 package com.LibreriaApi.Service;
 
-import com.LibreriaApi.Model.User;
+import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.LogInRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ public class LogInService {
     @Autowired
     private LogInRepository repository;
 
-    public Optional<User> logInService(String email, String password){
+    public Optional<UserEntity> logInService(String email, String password){
 
         return repository.findByEmailAndPass(email, password)
                 .or(() -> {
