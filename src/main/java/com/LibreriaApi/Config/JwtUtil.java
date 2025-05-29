@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class JtwUtil {
+public class JwtUtil {
 
     //@Value("$(jwt.secret)")
     private String SECRET_KEY = "gD7sJ4pX9qL2vT8mZ1eFwAyKgRbV6hCx";

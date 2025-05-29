@@ -2,7 +2,9 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
+import com.LibreriaApi.Model.BookDTO;
 import com.LibreriaApi.Repository.BookRepository;
+import com.LibreriaApi.Service.GoogleBooksApi.GoogleBooksRequeast;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class BookCrudService {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private GoogleBooksRequeast googleApi;
 
     //METODOS GET
 
@@ -52,7 +56,29 @@ public class BookCrudService {
     }
 
     //METODO ADD
-    public void addBookService(Book book) { bookRepository.save(book); }
+    public Book addBookService(BookDTO dto) {
+
+        String url = googleApi.getThumbnailByISBN(dto.getISBN());
+
+        System.out.println(dto.toString());
+
+        Book book = new Book();
+
+        book.setISBN(dto.getISBN());
+        book.setAuthor(dto.getAuthor());
+        book.setPublishingHouse(dto.getPublishingHouse());
+        book.setTitle(dto.getTitle());
+        book.setCategory(dto.getCategory());
+        book.setDescription(dto.getDescription());
+        book.setReleaseDate(dto.getReleaseDate());
+        book.setStatus(dto.getStatus());
+        book.setUrlImage(url);
+
+        System.out.println(book);
+
+        return bookRepository.save(book);
+
+    }
 
     //METODO UPDATE
     public void updateBookService(Book book) {

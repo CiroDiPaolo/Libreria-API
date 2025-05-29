@@ -1,5 +1,6 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Config.JwtUtil;
 import com.LibreriaApi.Enums.Role;
 import com.LibreriaApi.Model.LogInRequest;
 import com.LibreriaApi.Model.SignUpRequest;
@@ -14,11 +15,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,6 +34,8 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // DESPUES DIVIDIR LA LOGICA EN UNA CLASE SignUpService
     @PostMapping("/register")
@@ -53,12 +59,33 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
 
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tiraste fruta" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al ingresar los datos. " + e.getMessage());
         }
     }
 
-    @PostMapping("/")
-    public ResponseEntity<String> authLogIn(@RequestBody @Valid LogInRequest request) {
+
+    //LOGIN CON JWT
+    @PostMapping("/login")
+    public ResponseEntity<?> authLogIn(@RequestBody @Valid LogInRequest request) {
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+
+            // DEVUELVE EL USUARIO AUNTENTICADO
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            // USA EL USUARIO AUTENTICADO PARA DEVOLVER EL TOKEN
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok().body(Collections.singletonMap("token", jwt));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
+        }
+    }
+
+    // LOGIN NORMAL
+    @PostMapping("/loginNormal")
+    public ResponseEntity<String> authLogInNormal(@RequestBody @Valid LogInRequest request) {
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
