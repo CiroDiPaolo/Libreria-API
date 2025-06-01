@@ -4,6 +4,7 @@ import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Repository.ReviewRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,18 +38,12 @@ public class ReviewCrudService {
     }
 
     //Metodos DELETE
+    @Transactional
     public void deleteByIdService(Long id) {
-
-        Optional<Review> op = reviewRepository.findById(id);
-
-        if(op.isPresent()){
-
-            reviewRepository.deleteById(id);
-
-        }else{
+        if (!reviewRepository.existsById(id)) {
             throw new EntityNotFoundException("Review no encontrada");
         }
-
+        reviewRepository.logicallyDeleteById(id);
     }
 
     //Metodo PUT
@@ -59,12 +54,15 @@ public class ReviewCrudService {
 
     //Meteodo POST
 
-    public Review updateReviewService(Long id, Review review) {
-        if (!reviewRepository.existsById(id)) {
-            throw new EntityNotFoundException("Review no encontrada");
-        }
-        review.setIdReview(id); 
-        return reviewRepository.save(review);
-    }
+    @Transactional
+    public Review updateReviewService(Long id,Review newReview) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id));
 
+        review.setContent(newReview.getContent());
+        review.setRating(newReview.getRating());
+
+        return review;
+    }
 }
+
