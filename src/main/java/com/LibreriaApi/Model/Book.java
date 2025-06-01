@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.SimpleTimeZone;
@@ -14,7 +17,13 @@ import java.util.SimpleTimeZone;
 @Entity
 @Table(name = "Book")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book extends Multimedia{
+
+    @Column(name = "urlImage")
+    private String urlImage;
 
     @NotNull(message = "El ISBN no puede ser nulo")
     @Pattern(regexp = "^(\\d{9}[0-9X])|(978\\d{9}[0-9])$", message = "El ISBN debe tener 10 o 13 caracteres")
@@ -33,7 +42,6 @@ public class Book extends Multimedia{
 
     @NotNull(message = "La editorial no puede ser nula")
     @Size(min = 1, max = 30, message = "La editorial no debe exdecer los 30 caracteres")
-    @PastOrPresent(message = "La fecha de publicación debe ser en el pasado o el presente")
     @Column(name = "publishingHouse",length = 30)
     private String publishingHouse;
 

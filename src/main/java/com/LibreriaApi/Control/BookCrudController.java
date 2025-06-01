@@ -1,8 +1,10 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.Book;
+import com.LibreriaApi.Model.BookDTO;
 import com.LibreriaApi.Service.BookCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -51,9 +53,11 @@ public class BookCrudController {
 
 
     @PostMapping()
-    public void createBook(@RequestBody Book book) {
+    public ResponseEntity<Book> createBook(@RequestBody BookDTO book) {
 
-        bookCrudService.addBookService(book);
+        Book newBook = bookCrudService.addBookService(book);
+
+        return ResponseEntity.ok(newBook);
 
     }
 
