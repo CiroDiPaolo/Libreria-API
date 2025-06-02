@@ -77,4 +77,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> IllegalArgumentException(IllegalArgumentException exception){
+        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
+        return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
+    }
+
 }
