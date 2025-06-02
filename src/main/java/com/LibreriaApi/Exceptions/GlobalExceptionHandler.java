@@ -1,7 +1,5 @@
-package com.LibreriaApi;
+package com.LibreriaApi.Exceptions;
 
-import com.LibreriaApi.Exceptions.BookStageNotFoundException;
-import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -70,6 +68,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<?> handleWrongMethod(HttpRequestMethodNotSupportedException ex) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Metodo no permitido");
+    }
+
+    //Se lanza cuando el usuario no puede acceder al metodo
+    @ExceptionHandler(AccessDeniedUserException.class)
+    public ResponseEntity<?> AccessDeniedUserException(AccessDeniedUserException exception){
+        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
+        return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
     }
 
 }
