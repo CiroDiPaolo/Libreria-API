@@ -322,4 +322,22 @@ public class testBookService {
         verify(bookRepository, never()).save(any(Book.class));
     }
 
+    // TESTS PARA CASOS EDGE
+
+    // AGREGA UN LIBRO PERO LA API DE GOOGLE DEVUELVE NULL
+    @Test
+    void addBookService_WhenGoogleApiReturnsNull_ShouldHandleGracefully() {
+        // Given
+        when(googleApi.getThumbnailByISBN(bookDTO.getISBN())).thenReturn(null);
+        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+
+        // When
+        Book result = bookCrudService.addBookService(bookDTO);
+
+        // Then
+        assertNotNull(result);
+        verify(googleApi, times(1)).getThumbnailByISBN(bookDTO.getISBN());
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
 }
