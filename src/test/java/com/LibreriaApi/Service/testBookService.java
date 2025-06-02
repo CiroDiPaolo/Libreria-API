@@ -232,4 +232,94 @@ public class testBookService {
         verify(bookRepository, never()).deleteById(anyLong());
     }
 
+    // TESTS PARA MÉTODO ADD ////////////////////////
+
+    // AGREGAR UN LIBRO (COMPRUEBA SI SE CREA JUNTO CON SU IMAGEN)
+    @Test
+    void addBookService_ShouldCreateBookWithGoogleImage() {
+        // Given
+        String expectedImageUrl = "http://books.google.com/books/content?id=hKiTPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api";
+        when(googleApi.getThumbnailByISBN(bookDTO.getISBN())).thenReturn(expectedImageUrl);
+        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+
+        // When
+        Book result = bookCrudService.addBookService(bookDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(book1, result);
+
+        verify(googleApi, times(1)).getThumbnailByISBN(bookDTO.getISBN());
+        verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+    // VALIDA QUE EL DTO SE MAPPEO CORRECTAMENTE, O ALGO ASI
+    @Test
+    void addBookService_ShouldMapDTOFieldsCorrectly() {
+        // Given
+        String expectedImageUrl = "http://google-books.com/thumbnail.jpg";
+        when(googleApi.getThumbnailByISBN(anyString())).thenReturn(expectedImageUrl);
+        // Buscar que hace lo siguiente:
+        when(bookRepository.save(any(Book.class))).thenAnswer(invocation -> {
+            Book savedBook = invocation.getArgument(0);
+            savedBook.setId(1L);
+            return savedBook;
+        });
+
+        // When
+        Book result = bookCrudService.addBookService(bookDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(bookDTO.getTitle(), result.getTitle());
+        assertEquals(bookDTO.getAuthor(), result.getAuthor());
+        assertEquals(bookDTO.getISBN(), result.getISBN());
+        assertEquals(bookDTO.getPublishingHouse(), result.getPublishingHouse());
+        assertEquals(bookDTO.getCategory(), result.getCategory());
+        assertEquals(bookDTO.getDescription(), result.getDescription());
+        assertEquals(bookDTO.getReleaseDate(), result.getReleaseDate());
+        assertEquals(bookDTO.getStatus(), result.getStatus());
+        assertEquals(expectedImageUrl, result.getUrlImage());
+    }
+
+    // TESTS PARA MÉTODO UPDATE /////////////
+
+    // ACTUALIZA UN LIBRO QUE EXISTE
+    @Test
+    void updateBookService_WhenExists_ShouldUpdateSuccessfully() {
+        // Given
+        Book bookToUpdate = new Book();
+        bookToUpdate.setId(1L);
+        bookToUpdate.setTitle("Título Actualizado");
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
+        when(bookRepository.save(bookToUpdate)).thenReturn(bookToUpdate);
+
+        // When & Then
+        assertDoesNotThrow(() -> bookCrudService.updateBookService(bookToUpdate));
+
+        verify(bookRepository, times(1)).findById(1L);
+        verify(bookRepository, times(1)).save(bookToUpdate);
+    }
+
+    // ACTUALIZA UN LIBRO QUE NO EXISTE
+    @Test
+    void updateBookService_WhenNotExists_ShouldThrowException() {
+        // Given
+        Book bookToUpdate = new Book();
+        bookToUpdate.setId(99L);
+
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // When & Then
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> bookCrudService.updateBookService(bookToUpdate)
+        );
+
+        assertEquals("El libro no existe", exception.getMessage());
+        verify(bookRepository, times(1)).findById(99L);
+        verify(bookRepository, never()).save(any(Book.class));
+    }
+
 }
