@@ -41,7 +41,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> authSignUp(@RequestBody @Valid SignUpRequest request) {
         try {
-            System.out.println("Entrando a /auth/register...");
             if (userRepository.existsByEmail(request.getEmail())) {
                 // ESTO LO ARREGLA THE BREAKBALLS (meli)
                 throw new RuntimeException("El email ya está registrado");
