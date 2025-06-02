@@ -1,5 +1,6 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Security.UserEntityDetails;
@@ -92,10 +93,9 @@ public class ReviewCrudController {
     )
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id, @AuthenticationPrincipal UserEntityDetails userDetails) {
+    public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id) {
 
-        Long idUser = userDetails.getId();
-        reviewCrudService.deleteByIdService(id, idUser);
+        reviewCrudService.deleteByIdService(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -109,15 +109,13 @@ public class ReviewCrudController {
                             responseCode = "200",
                             description = "Reseña agregada",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Review.class))
+                                    schema = @Schema(implementation = ReviewDTO.class))
                     )
             }
     )
     @PostMapping()
-    public ResponseEntity<Review> addReview(@RequestBody Review review, @AuthenticationPrincipal UserEntityDetails userDetails) {
-
-        review.setStatus(true);
-        Review createdReview = reviewCrudService.addReviewService(review, userDetails.getId());
+    public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO review) {
+        ReviewDTO createdReview = reviewCrudService.addReviewService(review);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdReview.getIdReview())
@@ -139,8 +137,9 @@ public class ReviewCrudController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody Review review, @AuthenticationPrincipal UserEntityDetails userDetails) {
-        Review updatedReview = reviewCrudService.updateReviewService(id, review, userDetails.getId());
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
+
+        ReviewDTO updatedReview = reviewCrudService.updateReviewService(id, reviewDTO);
         return ResponseEntity.ok(updatedReview);
     }
 
