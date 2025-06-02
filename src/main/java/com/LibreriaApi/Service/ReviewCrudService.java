@@ -1,5 +1,6 @@
 package com.LibreriaApi.Service;
 
+import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
@@ -7,7 +8,6 @@ import com.LibreriaApi.Repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +39,10 @@ public class ReviewCrudService {
 
     //Metodos DELETE
     @Transactional
-    public void deleteByIdService(Long id) {
-        if (!reviewRepository.existsById(id)) {
-            throw new EntityNotFoundException("Review no encontrada");
-        }
-        reviewRepository.logicallyDeleteById(id);
+    public void deleteByIdService(Long idReview, Long idUser) {
+       if(this.checkReviewBelongsToUser(idUser, idReview)){
+           reviewRepository.logicallyDeleteById(idReview);
+       }
     }
 
     //Metodo PUT
@@ -63,6 +62,19 @@ public class ReviewCrudService {
         review.setRating(newReview.getRating());
 
         return review;
+    }
+
+    public boolean checkReviewBelongsToUser(Long idUser, Long idReview){
+        Optional<Review> review = reviewRepository.findById(idReview);
+        if(review.isPresent()){
+            if(review.get().getUser().getId() == idUser){
+                return true;
+            }else{
+                throw new AccessDeniedUserException("La review no corresponde a su usuario");
+            }
+        }else{
+            throw new EntityNotFoundException("Review no encontrada");
+        }
     }
 }
 

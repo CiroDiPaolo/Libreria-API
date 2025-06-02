@@ -1,6 +1,7 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.Review;
+import com.LibreriaApi.Security.UserEntityDetails;
 import com.LibreriaApi.Service.ReviewCrudService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -10,12 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/review")
@@ -86,9 +88,13 @@ public class ReviewCrudController {
                     )
             }
     )
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewById(@PathVariable Long id) {
-        reviewCrudService.deleteByIdService(id);
+    public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id, @AuthenticationPrincipal UserEntityDetails userDetails) {
+
+        Long idUser = userDetails.getId();
+        reviewCrudService.deleteByIdService(id, idUser);
+
         return ResponseEntity.noContent().build();
     }
 
