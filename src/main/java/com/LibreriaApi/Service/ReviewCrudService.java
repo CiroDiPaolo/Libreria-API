@@ -38,18 +38,18 @@ public class ReviewCrudService {
 
     //Metodos GET
 
-    public Review getReviewByIdService(Long id) {
+    public ReviewDTO getReviewByIdService(Long id) {
 
-        return reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id));
+        return this.toDTO(reviewRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id)));
+
 
     }
 
-    public List<Review> getAllReviewsOfABookService(Long bookId) {
+    public List<ReviewDTO> getAllReviewsOfABookService(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimedia_Id(bookId);
+        return reviewRepository.findByMultimedia_Id(bookId).stream().map(this::toDTO).toList();
     }
 
     //Metodos DELETE

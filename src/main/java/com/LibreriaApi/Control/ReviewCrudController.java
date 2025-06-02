@@ -48,8 +48,8 @@ public class ReviewCrudController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
-        Review review = reviewCrudService.getReviewByIdService(id);
+    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
+        ReviewDTO review = reviewCrudService.getReviewByIdService(id);
         return ResponseEntity.ok(review);
     }
 
@@ -70,7 +70,7 @@ public class ReviewCrudController {
             }
     )
     @GetMapping("/all/{id}")
-    public ResponseEntity<List<Review>> getAllReviewsOfABook(@PathVariable Long id) {
+    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(@PathVariable Long id) {
         return ResponseEntity.ok(reviewCrudService.getAllReviewsOfABookService(id));
     }
 
