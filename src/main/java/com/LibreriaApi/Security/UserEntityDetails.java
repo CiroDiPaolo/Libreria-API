@@ -31,6 +31,10 @@ public class UserEntityDetails implements UserDetails {
         return user.getEmail();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
     // Los demás métodos devuelven true (cuenta no expirada, etc.)
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
