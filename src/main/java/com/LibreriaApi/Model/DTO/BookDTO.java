@@ -1,5 +1,6 @@
-package com.LibreriaApi.Model;
+package com.LibreriaApi.Model.DTO;
 
+import com.LibreriaApi.Model.Multimedia;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
