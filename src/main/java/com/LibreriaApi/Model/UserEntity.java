@@ -41,10 +41,6 @@ public class UserEntity {
     @Column(name = "role", length = 20)
     private Role role;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "credencial_id", referencedColumnName = "idCredential")
-//    private Credential credential;
-
     @Override
     public String toString() {
         return "User{" +
