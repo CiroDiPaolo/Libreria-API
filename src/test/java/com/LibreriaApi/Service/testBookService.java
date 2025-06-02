@@ -3,7 +3,7 @@ package com.LibreriaApi.Service;
 import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
-import com.LibreriaApi.Model.BookDTO;
+import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Service.GoogleBooksApi.GoogleBooksRequeast;
 import org.junit.jupiter.api.BeforeEach;
