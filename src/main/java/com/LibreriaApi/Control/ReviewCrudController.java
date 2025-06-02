@@ -1,7 +1,9 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Security.UserEntityDetails;
+import com.LibreriaApi.Service.MultimediaService;
 import com.LibreriaApi.Service.ReviewCrudService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -112,8 +114,10 @@ public class ReviewCrudController {
             }
     )
     @PostMapping()
-    public ResponseEntity<Review> addReview(@RequestBody Review review) {
-        Review createdReview = reviewCrudService.addReviewService(review);
+    public ResponseEntity<Review> addReview(@RequestBody Review review, @AuthenticationPrincipal UserEntityDetails userDetails) {
+
+        review.setStatus(true);
+        Review createdReview = reviewCrudService.addReviewService(review, userDetails.getId());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdReview.getIdReview())
@@ -135,8 +139,8 @@ public class ReviewCrudController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody Review review) {
-        Review updatedReview = reviewCrudService.updateReviewService(id, review);
+    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody Review review, @AuthenticationPrincipal UserEntityDetails userDetails) {
+        Review updatedReview = reviewCrudService.updateReviewService(id, review, userDetails.getId());
         return ResponseEntity.ok(updatedReview);
     }
 
