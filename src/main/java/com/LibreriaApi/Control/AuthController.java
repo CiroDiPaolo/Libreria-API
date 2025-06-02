@@ -83,19 +83,5 @@ public class AuthController {
         }
     }
 
-    // LOGIN NORMAL
-    @PostMapping("/loginNormal")
-    public ResponseEntity<String> authLogInNormal(@RequestBody @Valid LogInRequest request) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            return ResponseEntity.ok("Autenticación exitosa");
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
-        }
-    }
 
 }
