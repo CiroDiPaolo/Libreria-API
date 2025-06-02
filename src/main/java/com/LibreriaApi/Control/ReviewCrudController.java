@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -47,6 +48,7 @@ public class ReviewCrudController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
         ReviewDTO review = reviewCrudService.getReviewByIdService(id);
@@ -74,6 +76,23 @@ public class ReviewCrudController {
         return ResponseEntity.ok(reviewCrudService.getAllReviewsOfABookService(id));
     }
 
+    @GetMapping("/active/{id}")
+    public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getAllActiveReviewsOfABookService(id));
+    }
+
+    // GET REVIEW POR LIBRO Y POR USUARIO Y STATUS TRUE
+    @GetMapping("/userReview/{id}")
+    public ResponseEntity<ReviewDTO> getUserReviewByBookAndStatusActive(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBookAndStatusTrue(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<ReviewDTO> getUserReviewByBook(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBook(id));
+    }
+
     //DELETE
     @Operation(
             summary = "Eliminar una review por ID",
@@ -99,6 +118,8 @@ public class ReviewCrudController {
 
         return ResponseEntity.noContent().build();
     }
+
+    //DELETE DE ADMIN OSEA A CUALQUIER REVIEW
 
     //POST
     @Operation(

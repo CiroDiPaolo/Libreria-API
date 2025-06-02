@@ -17,4 +17,9 @@ public interface ReviewRepository extends JpaRepository<Review , Long> {
         @Modifying
         @Query("update Review r set r.status = false where r.id = :id")
         void logicallyDeleteById(@Param("id") Long id);
+
+        List<Review> findByMultimediaIdAndStatusTrue(Long idMultimedia);
+        Optional<Review> findByMultimediaIdAndUserIdAndStatusTrue(Long idMultimedia, Long idUser);
+
+        Optional<Review> findByMultimediaIdAndUserId(Long idMultimedia, Long idUser);
 }

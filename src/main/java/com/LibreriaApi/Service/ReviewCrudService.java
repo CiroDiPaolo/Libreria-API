@@ -52,6 +52,39 @@ public class ReviewCrudService {
         return reviewRepository.findByMultimedia_Id(bookId).stream().map(this::toDTO).toList();
     }
 
+    public List<ReviewDTO> getAllActiveReviewsOfABookService(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
+        }
+        return reviewRepository.findByMultimediaIdAndStatusTrue(bookId).stream().map(this::toDTO).toList();
+    }
+
+    public ReviewDTO getReviewByUserAndBookAndStatusTrue(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
+        }
+        Long idUser = userService.getIdUserByToken();
+        Optional<Review> review = reviewRepository.findByMultimediaIdAndUserIdAndStatusTrue(bookId, idUser);
+        if (review.isPresent()){
+            return this.toDTO(review.get());
+        }else{
+            throw new EntityNotFoundException("El usuario no tiene review del libro " + bookId);
+        }
+    }
+
+    public ReviewDTO getReviewByUserAndBook(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
+        }
+        Long idUser = userService.getIdUserByToken();
+        Optional<Review> review = reviewRepository.findByMultimediaIdAndUserId(bookId, idUser);
+        if (review.isPresent()){
+            return this.toDTO(review.get());
+        }else{
+            throw new EntityNotFoundException("El usuario no tiene review del libro " + bookId);
+        }
+    }
+
     //Metodos DELETE
     @Transactional
     public void deleteByIdService(Long idReview) {
