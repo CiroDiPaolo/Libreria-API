@@ -1,5 +1,6 @@
 package com.LibreriaApi.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
@@ -51,7 +52,6 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "idMultimedia")
     @Valid
-    @JsonSerialize(using = MultimediaIdSerializer.class)
     private Multimedia multimedia;
 
 }
