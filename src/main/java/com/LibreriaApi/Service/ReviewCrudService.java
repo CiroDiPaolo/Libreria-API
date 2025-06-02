@@ -2,17 +2,20 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Repository.MultimediaRepository;
 import com.LibreriaApi.Repository.ReviewRepository;
+import com.LibreriaApi.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,6 +29,12 @@ public class ReviewCrudService {
 
     @Autowired
     private MultimediaRepository multimediaRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     //Metodos GET
 
@@ -45,7 +54,8 @@ public class ReviewCrudService {
 
     //Metodos DELETE
     @Transactional
-    public void deleteByIdService(Long idReview, Long idUser) {
+    public void deleteByIdService(Long idReview) {
+        Long idUser = userService.getIdUserByToken();
        if(this.checkReviewBelongsToUser(idUser, idReview)){
            reviewRepository.logicallyDeleteById(idReview);
        }
@@ -53,50 +63,36 @@ public class ReviewCrudService {
 
     //Metodo POST
     @Transactional
-    public Review addReviewService(Review review, Long idUser) {
-        if (idUser == null) {
-            throw new IllegalArgumentException("El id del usuario no puede ser null");
-        }
-
-        // Asignar el usuario con el id que recibo
-        UserEntity user = new UserEntity();
-        user.setId(idUser);
-        review.setUser(user);
-
-        Long idMultimedia = review.getMultimedia() != null ? review.getMultimedia().getId() : null;
-        if (idMultimedia == null) {
-            throw new IllegalArgumentException("El id de multimedia no puede ser null");
-        }
-
-        Multimedia multimedia = multimediaRepository.findById(idMultimedia)
-                .orElseThrow(() -> new EntityNotFoundException("Multimedia no encontrado con id: " + idMultimedia));
-
-        review.setMultimedia(multimedia);
-
-        return reviewRepository.save(review);
+    public ReviewDTO addReviewService(ReviewDTO review) {
+        Long idUser = userService.getIdUserByToken();
+        review.setIdUser(idUser);
+        review.setStatus(true);
+        return this.toDTO(reviewRepository.save(this.toModel(review)));
     }
 
     //Meteodo PUT
 
     @Transactional
-    public Review updateReviewService(Long idReview,Review newReview, Long idUser) {
-        if (!this.checkReviewBelongsToUser(idReview, idUser)) {
-            throw new AccessDeniedUserException("La review no pertenece al usuario.");
-        }
+    public ReviewDTO updateReviewService(Long idReview,ReviewDTO reviewDTO) {
+        Long idUser = userService.getIdUserByToken();
+        this.checkReviewBelongsToUser(idUser, idReview);
 
         Review review = reviewRepository.findById(idReview)
                 .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + idReview));
 
-        review.setContent(newReview.getContent());
-        review.setRating(newReview.getRating());
+        if(!review.getStatus()){
+            throw new AccessDeniedUserException("La reseña esta eliminada");
+        }
+        review.setContent(reviewDTO.getContent());
+        review.setRating(reviewDTO.getRating());
 
-        return review;
+        return this.toDTO(review);
     }
 
     public boolean checkReviewBelongsToUser(Long idUser, Long idReview){
         Optional<Review> review = reviewRepository.findById(idReview);
         if(review.isPresent()){
-            if(review.get().getUser().getId() == idUser){
+            if(Objects.equals(review.get().getUser().getId(), idUser)){
                 return true;
             }else{
                 throw new AccessDeniedUserException("La review no corresponde a su usuario");
@@ -104,6 +100,35 @@ public class ReviewCrudService {
         }else{
             throw new EntityNotFoundException("Review no encontrada id = " + idReview);
         }
+    }
+
+    public ReviewDTO toDTO (Review review){
+        return new ReviewDTO(
+                review.getIdReview(),
+                review.getRating(),
+                review.getContent(),
+                review.getStatus(),
+                review.getUser().getId(),
+                review.getMultimedia().getId()
+        );
+    }
+
+    public Review toModel (ReviewDTO reviewDTO){
+        Long idMultimedia = reviewDTO.getIdMultimedia();
+        Multimedia multimedia = multimediaRepository.findById(idMultimedia)
+                .orElseThrow(() -> new EntityNotFoundException("Multimedia no encontrado con id: " + idMultimedia));
+
+        Long idUser = reviewDTO.getIdUser();
+        UserEntity user = userRepository.findById(idUser)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + idUser));
+        return new Review(
+                reviewDTO.getIdReview(),
+                reviewDTO.getRating(),
+                reviewDTO.getContent(),
+                reviewDTO.getStatus(),
+                user,
+                multimedia
+        );
     }
 }
 

@@ -45,7 +45,6 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "idUser")
     @Valid
-    @JsonSerialize(using = UserIdSerializer.class)
     private UserEntity user;
 
     @NotNull
