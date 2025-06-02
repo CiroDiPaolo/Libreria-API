@@ -2,9 +2,12 @@ package com.LibreriaApi.Model;
 
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class SignUpRequest {
 
     @NotBlank(message = "El nombre de usuario no puede ser nulo")
