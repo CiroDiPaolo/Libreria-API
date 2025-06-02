@@ -196,4 +196,40 @@ public class testBookService {
         verify(bookRepository, times(1)).findBypublishingHouse(editorial);
     }
 
+    // TESTS PARA MÉTODO DELETE ////////////////////
+
+    // ELIMINA UN LIBRO QUE EXISTE
+    @Test
+    void deleteBookService_WhenExists_ShouldDeleteSuccessfully() {
+        // Given
+        Long id = 1L;
+        when(bookRepository.findById(id)).thenReturn(Optional.of(book1));
+        // Buscar como funciona el doNothing
+        doNothing().when(bookRepository).deleteById(id);
+
+        // When & Then
+        assertDoesNotThrow(() -> bookCrudService.deleteBookService(id));
+
+        verify(bookRepository, times(1)).findById(id);
+        verify(bookRepository, times(1)).deleteById(id);
+    }
+
+    // ELIMINAR UN LIBRO QUE NO EXISTE
+    @Test
+    void deleteBookService_WhenNotExists_ShouldThrowException() {
+        // Given
+        Long id = 99L;
+        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+
+        // When & Then
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> bookCrudService.deleteBookService(id)
+        );
+
+        assertEquals("El libro no existe", exception.getMessage());
+        verify(bookRepository, times(1)).findById(id);
+        verify(bookRepository, never()).deleteById(anyLong());
+    }
+
 }
