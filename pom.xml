@@ -89,17 +89,23 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
+        <!-- JSON -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20250517</version>
+        </dependency>
+        <!-- JUNIT + MOCKITO -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.17.0</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
