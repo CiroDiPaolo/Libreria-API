@@ -1,5 +1,7 @@
 package com.LibreriaApi.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -42,12 +44,14 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "idUser")
     @Valid
+    @JsonSerialize(using = UserIdSerializer.class)
     private UserEntity user;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "idMultimedia")
     @Valid
+    @JsonSerialize(using = MultimediaIdSerializer.class)
     private Multimedia multimedia;
 
 }
