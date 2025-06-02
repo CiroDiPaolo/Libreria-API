@@ -3,6 +3,7 @@ package com.LibreriaApi.Config;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    //@Value("$(jwt.secret)")
-    private String SECRET_KEY = "gD7sJ4pX9qL2vT8mZ1eFwAyKgRbV6hCx";
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
     public String generateToken(UserDetails userDetails) {
         String email = userDetails.getUsername(); // USO EL MAIL COMO SUBJECT

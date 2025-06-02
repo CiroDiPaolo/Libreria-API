@@ -25,7 +25,7 @@ public class AdminUserInitializer implements CommandLineRunner {
             UserEntity admin = new UserEntity();
             admin.setUsername("admin");
             admin.setEmail(adminEmail);
-            admin.setPass(passwordEncoder.encode("admin123"));
+            admin.setPass(passwordEncoder.encode("Admin123"));
             admin.setRole(Role.ADMIN);
             userRepository.save(admin);
             System.out.println("Usuario administrador creado por defecto.");
