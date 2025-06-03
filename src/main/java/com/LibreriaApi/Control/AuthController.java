@@ -41,7 +41,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> authSignUp(@RequestBody @Valid SignUpRequest request) {
         try {
-            System.out.println("Entrando a /auth/register...");
             if (userRepository.existsByEmail(request.getEmail())) {
                 // ESTO LO ARREGLA THE BREAKBALLS (meli)
                 throw new RuntimeException("El email ya está registrado");
@@ -83,19 +82,5 @@ public class AuthController {
         }
     }
 
-    // LOGIN NORMAL
-    @PostMapping("/loginNormal")
-    public ResponseEntity<String> authLogInNormal(@RequestBody @Valid LogInRequest request) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            return ResponseEntity.ok("Autenticación exitosa");
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
-        }
-    }
 
 }
