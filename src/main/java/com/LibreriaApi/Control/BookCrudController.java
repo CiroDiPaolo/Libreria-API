@@ -1,7 +1,7 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.Book;
-import com.LibreriaApi.Model.BookDTO;
+import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Service.BookCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
