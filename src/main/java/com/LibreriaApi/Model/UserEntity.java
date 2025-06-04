@@ -1,11 +1,14 @@
 package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -40,6 +43,11 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 20)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<BookStage> favoriteList;
+
 
     @Override
     public String toString() {
