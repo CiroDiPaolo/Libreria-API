@@ -1,13 +1,13 @@
 package com.LibreriaApi.Model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
 public class ErrorResponse {
     private LocalDateTime timestamp;
     private String message;
-
-    public ErrorResponse(LocalDateTime timestamp, String message) {
-        this.timestamp = timestamp;
-        this.message = message;
-    }
 }

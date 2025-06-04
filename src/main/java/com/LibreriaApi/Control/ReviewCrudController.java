@@ -1,60 +1,167 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Model.DTO.ReviewDTO;
+import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
+import com.LibreriaApi.Security.UserEntityDetails;
+import com.LibreriaApi.Service.MultimediaService;
 import com.LibreriaApi.Service.ReviewCrudService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Optional;
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/review")
+@Tag(name = "Review", description = "Operaciones sobre reviews")
 public class ReviewCrudController {
 
     @Autowired
     private ReviewCrudService reviewCrudService;
 
     //GET
-
+    @Operation(
+            summary = "Obtener una reseña por ID",
+            description = "Devuelve la reseña correspondiente al ID proporcionado.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Reseña encontrada",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Review.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No se encontró ninguna reseña con ese ID"
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public Optional<Review> getReviewById(@PathVariable Long id) {
-
-        return reviewCrudService.getReviewByIdService(id);
-
+    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
+        ReviewDTO review = reviewCrudService.getReviewByIdService(id);
+        return ResponseEntity.ok(review);
     }
 
+    @Operation(
+            summary = "Obtener todas las reseñas de un libro",
+            description = "Devuelve todas las reseñas asociadas al libro con el ID especificado.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de reseñas encontrada",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = Review.class)))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No se encontraron reseñas para el libro con ese ID"
+                    )
+            }
+    )
     @GetMapping("/all/{id}")
-    public Iterable<Review> getAllReviewsOfABook(@PathVariable Long id) {
+    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getAllReviewsOfABookService(id));
+    }
 
-        return reviewCrudService.getAllReviewsOfABookService(id);
+    @GetMapping("/active/{id}")
+    public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getAllActiveReviewsOfABookService(id));
+    }
 
+    // GET REVIEW POR LIBRO Y POR USUARIO Y STATUS TRUE
+    @GetMapping("/userReview/{id}")
+    public ResponseEntity<ReviewDTO> getUserReviewByBookAndStatusActive(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBookAndStatusTrue(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<ReviewDTO> getUserReviewByBook(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBook(id));
     }
 
     //DELETE
-
+    @Operation(
+            summary = "Eliminar una review por ID",
+            description = "Realiza la baja lógica de una reseña por su ID proporcionado",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Reseña eliminada(desactivada)",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Review.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No se encontraron reseñas con ese ID"
+                    )
+            }
+    )
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
-    public void deleteReviewById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id) {
 
         reviewCrudService.deleteByIdService(id);
 
+        return ResponseEntity.noContent().build();
     }
 
+    //DELETE DE ADMIN OSEA A CUALQUIER REVIEW
+
     //POST
-
+    @Operation(
+            summary = "Agregar una reseña",
+            description = "Agrega una reseña con los datos proporcionados",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Reseña agregada",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ReviewDTO.class))
+                    )
+            }
+    )
     @PostMapping()
-    public void addReview(@RequestBody Review review) {
-
-        reviewCrudService.addReviewService(review);
-
+    public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO review) {
+        ReviewDTO createdReview = reviewCrudService.addReviewService(review);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdReview.getIdReview())
+                .toUri();
+        return ResponseEntity.created(location).body(createdReview);
     }
 
     //PUT
+    @Operation(
+            summary = "Actualizar una reseña",
+            description = "Actualiza una reseña con los datos proporcionados",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Reseña modificada",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Review.class))
+                    )
+            }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
 
-    @PutMapping()
-    public void updateReview(@RequestBody Review review) {
-
-        reviewCrudService.updateReviewService(review);
-
+        ReviewDTO updatedReview = reviewCrudService.updateReviewService(id, reviewDTO);
+        return ResponseEntity.ok(updatedReview);
     }
 
 }
