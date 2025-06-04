@@ -1,52 +1,41 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
+import com.LibreriaApi.Model.DTO.BookStageDTO;
+import com.LibreriaApi.Model.UserEntity;
+import com.LibreriaApi.Repository.UserRepository;
 import com.LibreriaApi.Service.BookStageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import lombok.AllArgsConstructor;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/bookstage")
-@AllArgsConstructor
-
 public class BookStageController {
-    private final BookStageService bookStageService;
 
-    @GetMapping("/{id}")
-    public BookStage getById(@PathVariable Long id) {
-        return bookStageService.getBookStageService(id);
-    }
+    @Autowired
+    private BookStageService bookStageService;
 
-    @GetMapping("/user/{userId}")
-    public List<BookStage> getByUser(@PathVariable Long userId) {
-        return bookStageService.getBookStagesByUserId(userId);
-    }
+    @Autowired
+    private BookCrudController bookCrudController;
 
-    @GetMapping("/book/{bookId}")
-    public List<BookStage> getByBook(@PathVariable Long bookId) {
-        return bookStageService.getBookStagesByBookId(bookId);
-    }
+    @Autowired
+    private UserRepository userRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public void create(@RequestBody BookStage bookStage) {
-        bookStageService.addBookStageService(bookStage);
+    public ResponseEntity<BookStage> createBookStage(@RequestBody BookStageDTO bookStageDTO) {
+
+        System.out.println("prueba");
+
+        Book book = bookCrudController.getBook(bookStageDTO.getIdBook());
+
+        UserEntity user = userRepository.getById(bookStageDTO.getIdUser());
+
+        return ResponseEntity.ok(bookStageService.createService(user,book));
     }
 
-    @PutMapping
-    public void update(@RequestBody BookStage bookStage) {
-        bookStageService.updateBookStageService(bookStage);
-    }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        bookStageService.deleteBookStageService(id);
-    }
-
-    @GetMapping("/byUserAndBook")
-    public Optional<BookStage> getByUserAndBook(@RequestParam Long userId, @RequestParam Long bookId) {
-        return bookStageService.getByUserIdAndBookId(userId, bookId);
-    }
 }
