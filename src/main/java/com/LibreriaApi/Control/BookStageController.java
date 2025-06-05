@@ -17,10 +17,10 @@ public class BookStageController {
     private BookStageService bookStageService;
 
     //Metodo post
-    @PostMapping("/{id}")
-    public ResponseEntity<BookStage> createBookStage(@PathVariable Long id) {
+    @PostMapping("/{idBook}")
+    public ResponseEntity<BookStage> createBookStage(@PathVariable Long idBook) {
 
-        return ResponseEntity.ok(bookStageService.createService(id));
+        return ResponseEntity.ok(bookStageService.createService(idBook));
     }
 
     //Metodo get
@@ -57,16 +57,23 @@ public class BookStageController {
     }
 
     //recibe el id de un usuario al cual se le quiera eliminar un bookStage y el id del bookStage a travez del dto
-    @DeleteMapping()
-    public ResponseEntity<Void> deleteBookStageOfAUserById(@RequestBody BookStageDTO bookStageDTO){
+    @DeleteMapping("/{idUser}/{idBook}")
+    public ResponseEntity<Void> deleteBookStageOfAUserById(@PathVariable Long idUser, @PathVariable Long idBook){
 
-        bookStageService.deleteBookStageOfAUserByDTO(bookStageDTO);
+        bookStageService.deleteBookStageOfAUserByDTO(idUser,idBook);
 
         return ResponseEntity.noContent().build();
 
     }
 
+    //Metodos put
 
+    @PutMapping()
+    public ResponseEntity<BookStage> updateBookStage(@RequestBody BookStageDTO bookStageDTO){
+
+        return ResponseEntity.ok(bookStageService.updateBookStage(bookStageDTO));
+
+    }
 
 
 }
