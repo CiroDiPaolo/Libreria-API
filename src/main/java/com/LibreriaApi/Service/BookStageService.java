@@ -6,14 +6,14 @@ import com.LibreriaApi.Exceptions.BookStageNotFoundException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
-import com.LibreriaApi.Model.DTO.BookIdDTO;
+import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookStageRepository;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -31,18 +31,16 @@ public class BookStageService {
 
     @Autowired
     private BookCrudController bookCrudController;
-    @Autowired
-    private BookCrudService bookCrudService;
 
     //POST
 
-    public BookStage createService(BookIdDTO bookStageDTO) {
+    public BookStage createService(Long id) {
 
         Long userId = userService.getIdUserByToken();
 
         Optional<UserEntity> user = userRepository.findById(userId);
 
-        Book book = bookCrudController.getBook(bookStageDTO.getIdBook());
+        Book book = bookCrudController.getBook(id);
 
         bookStageRepository.findByUserAndBook(user.orElse(null), book)
                 .ifPresent(bs -> {
@@ -119,6 +117,21 @@ public class BookStageService {
 
     }
 
+    public void deleteBookStageOfAUserByDTO(BookStageDTO bookStageDTO){
+
+        Optional<UserEntity> user = userRepository.findById(bookStageDTO.getIdUser());
+
+        Optional<BookStage> bookStage = bookStageRepository.findByBookId(bookStageDTO.getIdBook());
+
+        if(checkBookStageOfUser(user,bookStage)){
+
+            user.get().getFavoriteList().remove(bookStage.get());
+
+            userRepository.save(user.get());
+
+        }
+
+    }
 
     public boolean checkBookStageOfUser(Optional<UserEntity> user,Optional<BookStage> bookStage){
 
