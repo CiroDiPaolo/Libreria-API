@@ -1,6 +1,7 @@
 package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -46,6 +47,7 @@ public class Book extends Multimedia{
     @Column(name = "publishingHouse",length = 30)
     private String publishingHouse;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookStage> bookStages;
 
