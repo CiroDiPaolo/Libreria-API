@@ -1,10 +1,8 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.BookStage;
-import com.LibreriaApi.Model.DTO.BookIdDTO;
+import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
-import com.LibreriaApi.Service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +17,10 @@ public class BookStageController {
     private BookStageService bookStageService;
 
     //Metodo post
-    @PostMapping
-    public ResponseEntity<BookStage> createBookStage(@RequestBody BookIdDTO bookStageDTO) {
+    @PostMapping("/{id}")
+    public ResponseEntity<BookStage> createBookStage(@PathVariable Long id) {
 
-        return ResponseEntity.ok(bookStageService.createService(bookStageDTO));
+        return ResponseEntity.ok(bookStageService.createService(id));
     }
 
     //Metodo get
@@ -48,7 +46,7 @@ public class BookStageController {
     }
 
     //metodos DELETE
-    //recibe el id del stage
+    //recibe el id del stage y elimina el del usuario logueado
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookStageOfUserById(@PathVariable Long id){
 
@@ -57,6 +55,18 @@ public class BookStageController {
         return ResponseEntity.noContent().build();
 
     }
+
+    //recibe el id de un usuario al cual se le quiera eliminar un bookStage y el id del bookStage a travez del dto
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteBookStageOfAUserById(@RequestBody BookStageDTO bookStageDTO){
+
+        bookStageService.deleteBookStageOfAUserByDTO(bookStageDTO);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+
 
 
 }
