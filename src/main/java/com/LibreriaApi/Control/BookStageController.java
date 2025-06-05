@@ -16,12 +16,19 @@ public class BookStageController {
     @Autowired
     private BookStageService bookStageService;
 
-
+    //Metodo post
     @PostMapping
     public ResponseEntity<BookStage> createBookStage(@RequestBody BookIdDTO bookStageDTO) {
 
         return ResponseEntity.ok(bookStageService.createService(bookStageDTO));
     }
 
+    //Metodo get
+    @GetMapping("/{id}")
+    public ResponseEntity<BookStage> getBookStageById(@PathVariable Long id){
+
+        return ResponseEntity.ok(bookStageService.getBookStageById(id));
+
+    }
 
 }

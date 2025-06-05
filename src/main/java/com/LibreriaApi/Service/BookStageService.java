@@ -3,6 +3,7 @@ package com.LibreriaApi.Service;
 import com.LibreriaApi.Control.BookCrudController;
 import com.LibreriaApi.Enums.Stage;
 import com.LibreriaApi.Exceptions.BookStageNotFoundException;
+import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookIdDTO;
@@ -53,6 +54,13 @@ public class BookStageService {
         bookStage.setStage(Stage.PENDIENTE);
 
         return bookStageRepository.save(bookStage);
+    }
+
+    //metodo get
+    public BookStage getBookStageById(Long id){
+
+        return bookStageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
     }
 
 }
