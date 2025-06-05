@@ -40,4 +40,11 @@ public class BookStageController {
 
     }
 
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<BookStage>> getAllBookStageOfAUser(@PathVariable Long id){
+
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfAUserService(id));
+
+    }
+
 }
