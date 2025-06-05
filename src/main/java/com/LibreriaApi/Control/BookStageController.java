@@ -47,4 +47,16 @@ public class BookStageController {
 
     }
 
+    //metodos DELETE
+    //recibe el id del stage
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBookStageOfUserById(@PathVariable Long id){
+
+        bookStageService.deleteBookStageOfUserById(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+
 }
