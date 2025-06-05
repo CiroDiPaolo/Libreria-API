@@ -13,6 +13,7 @@ import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,6 +62,14 @@ public class BookStageService {
 
         return bookStageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
+    }
+
+    public List<BookStage> getAllBookStageOfUserService(){
+
+        Long idUser = userService.getIdUserByToken();
+
+        return bookStageRepository.findByUserId(idUser);
+
     }
 
 }
