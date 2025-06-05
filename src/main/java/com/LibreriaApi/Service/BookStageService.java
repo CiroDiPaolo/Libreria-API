@@ -13,6 +13,7 @@ import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class BookStageService {
 
     @Autowired
     private BookCrudController bookCrudController;
+    @Autowired
+    private BookCrudService bookCrudService;
 
     //POST
 
@@ -78,5 +81,56 @@ public class BookStageService {
 
     }
 
+    //metodo DELETE
+    public void deleteBookStageOfUserById(Long id){
+
+        Long idUser = userService.getIdUserByToken();
+
+        Optional<UserEntity> user = userRepository.findById(idUser);
+
+        Optional<BookStage> bookStage = bookStageRepository.findById(id);
+
+        if(checkBookStageOfUser(user,bookStage)){
+
+            user.get().getFavoriteList().remove(bookStage.get());
+
+            userRepository.save(user.get());
+
+        }
+
+    }
+
+    //metodo DELETE
+    public void deleteBookStageOfAUserById(Long id){
+
+        Long idUser = userService.getIdUserByToken();
+
+        Optional<UserEntity> user = userRepository.findById(idUser);
+
+        Optional<BookStage> bookStage = bookStageRepository.findById(id);
+
+        if(checkBookStageOfUser(user,bookStage)){
+
+            user.get().getFavoriteList().remove(bookStage.get());
+
+            userRepository.save(user.get());
+
+        }
+
+    }
+
+
+    public boolean checkBookStageOfUser(Optional<UserEntity> user,Optional<BookStage> bookStage){
+
+        if(user.isPresent() && bookStage.isPresent()){
+
+            if(user.get().getFavoriteList().contains(bookStage.get()))
+
+                return true;
+
+        }
+
+        return false;
+    }
 
 }
