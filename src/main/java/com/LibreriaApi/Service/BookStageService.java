@@ -13,7 +13,6 @@ import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -32,118 +31,91 @@ public class BookStageService {
     @Autowired
     private BookCrudController bookCrudController;
 
-    //POST
-
+    // POST
     public BookStage createService(Long id) {
-
         Long userId = userService.getIdUserByToken();
-
-        Optional<UserEntity> user = userRepository.findById(userId);
-
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + userId));
         Book book = bookCrudController.getBook(id);
 
-        bookStageRepository.findByUserAndBook(user.orElse(null), book)
-                .ifPresent(bs -> {
-                    throw new BookStageNotFoundException("Este usuario ya tiene este libro en favoritos");
-                });
+        if (bookStageRepository.findByUserAndBook(user, book).isPresent()) {
+            throw new BookStageNotFoundException("Este usuario ya tiene este libro en favoritos");
+        }
 
         BookStage bookStage = new BookStage();
-
         bookStage.setBook(book);
-
-        bookStage.setUser(user.get());
-
+        bookStage.setUser(user);
         bookStage.setStage(Stage.PENDIENTE);
 
         return bookStageRepository.save(bookStage);
     }
 
-    //metodo get
-    public BookStage getBookStageById(Long id){
-
+    // GET
+    public BookStage getBookStageById(Long id) {
         return bookStageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
     }
 
-    public List<BookStage> getAllBookStageOfUserService(){
-
+    public List<BookStage> getAllBookStageOfUserService() {
         Long idUser = userService.getIdUserByToken();
-
         return bookStageRepository.findByUserId(idUser);
-
     }
 
-    public List<BookStage> getAllBookStageOfAUserService(Long id){
-
+    public List<BookStage> getAllBookStageOfAUserService(Long id) {
         return bookStageRepository.findByUserId(id);
-
     }
 
-    //metodo DELETE
-    public void deleteBookStageOfUserById(Long id){
-
+    // DELETE
+    public void deleteBookStageOfUserById(Long id) {
         Long idUser = userService.getIdUserByToken();
+        UserEntity user = userRepository.findById(idUser)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + idUser));
+        BookStage bookStage = bookStageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
 
-        Optional<UserEntity> user = userRepository.findById(idUser);
-
-        Optional<BookStage> bookStage = bookStageRepository.findById(id);
-
-        if(checkBookStageOfUser(user,bookStage)){
-
-            user.get().getFavoriteList().remove(bookStage.get());
-
-            userRepository.save(user.get());
-
+        if (!user.getFavoriteList().contains(bookStage)) {
+            throw new EntityNotFoundException("El usuario no contiene este libro en favoritos");
         }
 
+        user.getFavoriteList().remove(bookStage);
+        userRepository.save(user);
     }
 
-    //metodo DELETE
-    public void deleteBookStageOfAUserById(Long id){
+    public void deleteBookStageOfAUserById(Long id) {
+        deleteBookStageOfUserById(id);
+    }
 
-        Long idUser = userService.getIdUserByToken();
+    public void deleteBookStageOfAUserByDTO(Long idUser, Long idBook) {
+        UserEntity user = userRepository.findById(idUser)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + idUser));
+        BookStage bookStage = bookStageRepository.findByBookId(idBook)
+                .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id del libro: " + idBook));
 
-        Optional<UserEntity> user = userRepository.findById(idUser);
-
-        Optional<BookStage> bookStage = bookStageRepository.findById(id);
-
-        if(checkBookStageOfUser(user,bookStage)){
-
-            user.get().getFavoriteList().remove(bookStage.get());
-
-            userRepository.save(user.get());
-
+        if (!user.getFavoriteList().contains(bookStage)) {
+            throw new EntityNotFoundException("El usuario no contiene este libro en favoritos");
         }
 
+        user.getFavoriteList().remove(bookStage);
+        userRepository.save(user);
     }
 
-    public void deleteBookStageOfAUserByDTO(BookStageDTO bookStageDTO){
+    // PUT
+    public BookStage updateBookStage(BookStageDTO bookStageDTO) {
+        UserEntity user = userRepository.findById(bookStageDTO.getIdUser())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + bookStageDTO.getIdUser()));
+        BookStage bookStage = bookStageRepository.findByBookId(bookStageDTO.getIdBook())
+                .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id del libro: " + bookStageDTO.getIdBook()));
 
-        Optional<UserEntity> user = userRepository.findById(bookStageDTO.getIdUser());
-
-        Optional<BookStage> bookStage = bookStageRepository.findByBookId(bookStageDTO.getIdBook());
-
-        if(checkBookStageOfUser(user,bookStage)){
-
-            user.get().getFavoriteList().remove(bookStage.get());
-
-            userRepository.save(user.get());
-
+        if (!user.getFavoriteList().contains(bookStage)) {
+            throw new EntityNotFoundException("El usuario no contiene este libro");
         }
 
-    }
-
-    public boolean checkBookStageOfUser(Optional<UserEntity> user,Optional<BookStage> bookStage){
-
-        if(user.isPresent() && bookStage.isPresent()){
-
-            if(user.get().getFavoriteList().contains(bookStage.get()))
-
-                return true;
-
+        if (bookStage.getStage() == bookStageDTO.getStage()) {
+            throw new EntityNotFoundException("El stage no fue modificado");
         }
 
-        return false;
+        bookStage.setBook(bookCrudController.getBook(bookStageDTO.getIdBook()));
+        bookStage.setStage(bookStageDTO.getStage());
+        return bookStageRepository.save(bookStage);
     }
-
 }
