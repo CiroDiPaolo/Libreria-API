@@ -72,4 +72,11 @@ public class BookStageService {
 
     }
 
+    public List<BookStage> getAllBookStageOfAUserService(Long id){
+
+        return bookStageRepository.findByUserId(id);
+
+    }
+
+
 }
