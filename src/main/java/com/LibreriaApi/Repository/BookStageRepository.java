@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface BookStageRepository extends JpaRepository<BookStage, Long> {
     Optional<BookStage> findByUserIdAndBookId(Long userId, Long bookId);
     List<BookStage> findByUserId(Long userId);
-    List<BookStage> findByBookId(Long bookId);
+    Optional<BookStage> findByBookId(Long bookId);
     List<BookStage> findByStage(String stage);
     List<BookStage> findByStageContaining(String stage);
     List<BookStage> findByStageAndUserId(String stage, Long userId);
