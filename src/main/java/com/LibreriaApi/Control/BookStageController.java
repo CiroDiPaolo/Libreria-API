@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bookstage")
 public class BookStageController {
@@ -28,6 +30,13 @@ public class BookStageController {
     public ResponseEntity<BookStage> getBookStageById(@PathVariable Long id){
 
         return ResponseEntity.ok(bookStageService.getBookStageById(id));
+
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<BookStage>> getAllBookStageOfUser(){
+
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfUserService());
 
     }
 
