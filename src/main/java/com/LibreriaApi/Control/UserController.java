@@ -4,10 +4,7 @@ import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -25,6 +22,14 @@ public class UserController {
 
     }
 
+    //metodo delete
+    @DeleteMapping("/{idUser}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long idUser){
 
+        userService.deleteUserById(idUser);
+
+        return ResponseEntity.noContent().build();
+
+    }
 
 }
