@@ -87,11 +87,20 @@ public class ReviewCrudService {
 
     //Metodos DELETE
     @Transactional
-    public void deleteByIdService(Long idReview) {
+    public void deleteByIdServiceUser(Long idReview) {
         Long idUser = userService.getIdUserByToken();
        if(this.checkReviewBelongsToUser(idUser, idReview)){
            reviewRepository.logicallyDeleteById(idReview);
        }
+    }
+
+    @Transactional
+    public void deleteByIdService(Long idReview) {
+        if(reviewRepository.existsById(idReview)){
+            reviewRepository.logicallyDeleteById(idReview);
+        }else{
+            throw new EntityNotFoundException("La review con id " + idReview + " no existe");
+        }
     }
 
     //Metodo POST

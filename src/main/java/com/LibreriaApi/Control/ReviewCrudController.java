@@ -76,7 +76,6 @@ public class ReviewCrudController {
         return ResponseEntity.ok(reviewCrudService.getAllActiveReviewsOfABookService(id));
     }
 
-    // GET REVIEW POR LIBRO Y POR USUARIO Y STATUS TRUE
     @GetMapping("/userReview/{id}")
     public ResponseEntity<ReviewDTO> getUserReviewByBookAndStatusActive(@PathVariable Long id) {
         return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBookAndStatusTrue(id));
@@ -109,12 +108,20 @@ public class ReviewCrudController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id) {
 
-        reviewCrudService.deleteByIdService(id);
+        reviewCrudService.deleteByIdServiceUser(id);
 
         return ResponseEntity.noContent().build();
     }
 
-    //DELETE DE ADMIN OSEA A CUALQUIER REVIEW
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("admin/{id}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+
+        reviewCrudService.deleteByIdService(id);
+
+        return ResponseEntity.noContent().build();
+    }
 
     //POST
     @Operation(
