@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,6 +13,9 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Getter
+@Setter
 @Table( name = "User")
 public class UserEntity {
 
@@ -50,6 +51,8 @@ public class UserEntity {
     @JsonManagedReference
     private List<BookStage> favoriteList;
 
+    @Column(name = "status")
+    private boolean status = true;
 
     @Override
     public String toString() {
