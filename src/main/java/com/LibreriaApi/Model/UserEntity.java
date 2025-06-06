@@ -1,12 +1,11 @@
 package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +13,9 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Getter
+@Setter
 @Table( name = "User")
 public class UserEntity {
 
@@ -27,6 +29,7 @@ public class UserEntity {
     @Column( name = "username", length = 20)
     private String username;
 
+    @JsonIgnore
     @NotBlank(message = "La contraseña no puede ser nula")
     //@Size(min = 6, max = 20, message = "La contraseña debe tener entre 6 y 20 caracteres")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "La contraseña debe tener al menos una mayúscula, una minúscula y un número")
@@ -48,6 +51,8 @@ public class UserEntity {
     @JsonManagedReference
     private List<BookStage> favoriteList;
 
+    @Column(name = "status")
+    private boolean status = true;
 
     @Override
     public String toString() {

@@ -2,8 +2,10 @@ package com.LibreriaApi.Repository;
 
 import com.LibreriaApi.Model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +24,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByEmailAndPass(String email, String pass);
 
     UserEntity findByUsernameAndEmailAndPass(String username, String email, String pass);
+
+    @Query("SELECT u FROM UserEntity u")
+    List<UserEntity> getAllUsers();
 
 }
