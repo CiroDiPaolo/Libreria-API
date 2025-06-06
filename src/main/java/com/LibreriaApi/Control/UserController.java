@@ -24,6 +24,16 @@ public class UserController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @GetMapping()
+    public ResponseEntity<UserEntity> getUserLogged(){
+
+        System.out.println(userService.getIdUserByToken());
+
+        return ResponseEntity.ok(userService.getUserById(userService.getIdUserByToken()));
+
+    }
+
     //metodo delete
     @PreAuthorize("hasrole('ADMIN')")
     @DeleteMapping("/{idUser}")
