@@ -1,6 +1,7 @@
 package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.SimpleTimeZone;
 
 @Entity
@@ -44,5 +46,10 @@ public class Book extends Multimedia{
     @Size(min = 1, max = 30, message = "La editorial no debe exdecer los 30 caracteres")
     @Column(name = "publishingHouse",length = 30)
     private String publishingHouse;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookStage> bookStages;
+
 
 }

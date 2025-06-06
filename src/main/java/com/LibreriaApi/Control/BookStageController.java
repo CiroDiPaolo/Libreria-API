@@ -1,52 +1,79 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.BookStage;
+import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/bookstage")
-@AllArgsConstructor
-
 public class BookStageController {
-    private final BookStageService bookStageService;
 
+    @Autowired
+    private BookStageService bookStageService;
+
+    //Metodo post
+    @PostMapping("/{idBook}")
+    public ResponseEntity<BookStage> createBookStage(@PathVariable Long idBook) {
+
+        return ResponseEntity.ok(bookStageService.createService(idBook));
+    }
+
+    //Metodo get
     @GetMapping("/{id}")
-    public BookStage getById(@PathVariable Long id) {
-        return bookStageService.getBookStageService(id);
+    public ResponseEntity<BookStage> getBookStageById(@PathVariable Long id){
+
+        return ResponseEntity.ok(bookStageService.getBookStageById(id));
+
     }
 
-    @GetMapping("/user/{userId}")
-    public List<BookStage> getByUser(@PathVariable Long userId) {
-        return bookStageService.getBookStagesByUserId(userId);
+    @GetMapping("/all")
+    public ResponseEntity<List<BookStage>> getAllBookStageOfUser(){
+
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfUserService());
+
     }
 
-    @GetMapping("/book/{bookId}")
-    public List<BookStage> getByBook(@PathVariable Long bookId) {
-        return bookStageService.getBookStagesByBookId(bookId);
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<BookStage>> getAllBookStageOfAUser(@PathVariable Long id){
+
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfAUserService(id));
+
     }
 
-    @PostMapping
-    public void create(@RequestBody BookStage bookStage) {
-        bookStageService.addBookStageService(bookStage);
-    }
-
-    @PutMapping
-    public void update(@RequestBody BookStage bookStage) {
-        bookStageService.updateBookStageService(bookStage);
-    }
-
+    //metodos DELETE
+    //recibe el id del stage y elimina el del usuario logueado
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        bookStageService.deleteBookStageService(id);
+    public ResponseEntity<Void> deleteBookStageOfUserById(@PathVariable Long id){
+
+        bookStageService.deleteBookStageOfUserById(id);
+
+        return ResponseEntity.noContent().build();
+
     }
 
-    @GetMapping("/byUserAndBook")
-    public Optional<BookStage> getByUserAndBook(@RequestParam Long userId, @RequestParam Long bookId) {
-        return bookStageService.getByUserIdAndBookId(userId, bookId);
+    //recibe el id de un usuario al cual se le quiera eliminar un bookStage y el id del bookStage a travez del dto
+    @DeleteMapping("/{idUser}/{idBook}")
+    public ResponseEntity<Void> deleteBookStageOfAUserById(@PathVariable Long idUser, @PathVariable Long idBook){
+
+        bookStageService.deleteBookStageOfAUserByDTO(idUser,idBook);
+
+        return ResponseEntity.noContent().build();
+
     }
+
+    //Metodos put
+
+    @PutMapping()
+    public ResponseEntity<BookStage> updateBookStage(@RequestBody BookStageDTO bookStageDTO){
+
+        return ResponseEntity.ok(bookStageService.updateBookStage(bookStageDTO));
+
+    }
+
+
 }
