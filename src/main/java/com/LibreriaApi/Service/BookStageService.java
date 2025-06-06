@@ -10,6 +10,7 @@ import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookStageRepository;
 import com.LibreriaApi.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class BookStageService {
     private BookCrudController bookCrudController;
 
     // POST
+    @Transactional
     public BookStage createService(Long id) {
         Long userId = userService.getIdUserByToken();
         UserEntity user = userRepository.findById(userId)
@@ -51,21 +53,25 @@ public class BookStageService {
     }
 
     // GET
+    @Transactional
     public BookStage getBookStageById(Long id) {
         return bookStageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
     }
 
+    @Transactional
     public List<BookStage> getAllBookStageOfUserService() {
         Long idUser = userService.getIdUserByToken();
         return bookStageRepository.findByUserId(idUser);
     }
 
+    @Transactional
     public List<BookStage> getAllBookStageOfAUserService(Long id) {
         return bookStageRepository.findByUserId(id);
     }
 
     // DELETE
+    @Transactional
     public void deleteBookStageOfUserById(Long id) {
         Long idUser = userService.getIdUserByToken();
         UserEntity user = userRepository.findById(idUser)
@@ -81,10 +87,12 @@ public class BookStageService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteBookStageOfAUserById(Long id) {
         deleteBookStageOfUserById(id);
     }
 
+    @Transactional
     public void deleteBookStageOfAUserByDTO(Long idUser, Long idBook) {
         UserEntity user = userRepository.findById(idUser)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + idUser));
@@ -100,6 +108,7 @@ public class BookStageService {
     }
 
     // PUT
+    @Transactional
     public BookStage updateBookStage(BookStageDTO bookStageDTO) {
         UserEntity user = userRepository.findById(bookStageDTO.getIdUser())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + bookStageDTO.getIdUser()));
