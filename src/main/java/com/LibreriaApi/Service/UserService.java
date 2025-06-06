@@ -35,4 +35,11 @@ public class UserService {
             throw new EntityNotFoundException("El usuario no existe");
         }
     }
+
+    //metodos get
+    public UserEntity getUserById(Long id){
+
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
+
+    }
 }
