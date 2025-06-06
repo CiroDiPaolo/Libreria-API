@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -31,6 +33,14 @@ public class UserController {
         System.out.println(userService.getIdUserByToken());
 
         return ResponseEntity.ok(userService.getUserById(userService.getIdUserByToken()));
+
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public List<UserEntity> getAllUsers(){
+
+        return ResponseEntity.ok(userService.getAllUsers()).getBody();
 
     }
 
