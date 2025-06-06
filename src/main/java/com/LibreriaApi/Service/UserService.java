@@ -6,12 +6,12 @@ import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +43,12 @@ public class UserService {
     public UserEntity getUserById(Long id){
 
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
+
+    }
+
+    public List<UserEntity> getAllUsers(){
+
+        return userRepository.getAllUsers();
 
     }
 
