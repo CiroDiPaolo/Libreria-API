@@ -5,6 +5,7 @@ import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -42,4 +43,13 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
 
     }
+
+    //metodo delete
+    public void deleteUserById(Long id){
+
+        userRepository.deleteById(id);
+
+    }
+
+
 }
