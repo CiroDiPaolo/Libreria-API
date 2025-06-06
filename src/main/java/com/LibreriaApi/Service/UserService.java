@@ -2,6 +2,7 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Config.JwtUtil;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -47,7 +49,32 @@ public class UserService {
     //metodo delete
     public void deleteUserById(Long id){
 
-        userRepository.deleteById(id);
+        Optional<UserEntity> user = userRepository.findById(getIdUserByToken());
+
+        if(user.isPresent()){
+
+            user.get().setStatus(false);
+
+        }
+
+    }
+
+    //metodo post
+   public UserEntity updateUser(UserEntityDTO userDTO){
+
+        Optional<UserEntity> userO = userRepository.findById(getIdUserByToken());
+
+        if (userO.isPresent()) {
+
+            UserEntity userEntity = userO.get();
+            userEntity.setUsername(userDTO.getUsername());
+            userEntity.setEmail(userDTO.getEmail());
+            userEntity.setPass(userDTO.getPassword());
+
+            return userRepository.save(userEntity);
+        } else {
+            throw new EntityNotFoundException("Usuario no encontrado para actualizar");
+        }
 
     }
 
