@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ReviewCrudService {
+public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;

@@ -8,6 +8,7 @@ import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Model.UserEntity;
+import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Repository.BookStageRepository;
 import com.LibreriaApi.Repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BookStageService {
@@ -32,13 +32,17 @@ public class BookStageService {
     @Autowired
     private BookCrudController bookCrudController;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     // POST
     @Transactional
     public BookStage createService(Long id) {
         Long userId = userService.getIdUserByToken();
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + userId));
-        Book book = bookCrudController.getBook(id);
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));
 
         if (bookStageRepository.findByUserAndBook(user, book).isPresent()) {
             throw new BookStageNotFoundException("Este usuario ya tiene este libro en favoritos");
@@ -123,7 +127,10 @@ public class BookStageService {
             throw new EntityNotFoundException("El stage no fue modificado");
         }
 
-        bookStage.setBook(bookCrudController.getBook(bookStageDTO.getIdBook()));
+        bookStage.setBook(
+                bookRepository.findById(bookStageDTO.getIdBook())
+                        .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"))
+        );
         bookStage.setStage(bookStageDTO.getStage());
         return bookStageRepository.save(bookStage);
     }
