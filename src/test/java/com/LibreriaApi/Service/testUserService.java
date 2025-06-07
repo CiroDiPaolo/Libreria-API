@@ -56,6 +56,9 @@ public class testUserService {
         mockUserDTO.setPassword("newpassword");
     }
 
+    // EN SPRING ES MAS COMUN TRABAJAR CON AAA (Arrange, Act & Assert)
+    // Arrange = prepara los mocks, Act = llama a los metodos del service, Assert = Verifica los resultados
+
     // TESTS PARA getIdUserByToken() ////////////////////////
 
     // SI EL USUARIO ESTA AUTENTICADO, DEVUELVE SU ID
@@ -220,6 +223,71 @@ public class testUserService {
             // Assert
             //assertTrue(mockUser.getStatus()); // Status should remain unchanged
             verify(userRepository).findById(1L);
+        }
+    }
+
+    // TEST PARA UPDATE //////////////////////////////
+
+    // ACTUALIZA UN USUARIO QUE EXISTE
+    @Test
+    void updateUser_WhenUserExists_UpdatesAndReturnsUser() {
+        try (MockedStatic<SecurityContextHolder> mockedSecurityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            // Arrange
+            mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.isAuthenticated()).thenReturn(true);
+            when(authentication.getName()).thenReturn("test@example.com");
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+            when(userRepository.save(any(UserEntity.class))).thenReturn(mockUser);
+
+            // Act
+            UserEntity result = userService.updateUser(mockUserDTO);
+
+            // Assert
+            assertNotNull(result);
+            assertEquals(mockUserDTO.getUsername(), mockUser.getUsername());
+            assertEquals(mockUserDTO.getEmail(), mockUser.getEmail());
+            assertEquals(mockUserDTO.getPassword(), mockUser.getPass());
+            verify(userRepository).findById(1L);
+            verify(userRepository).save(mockUser);
+        }
+    }
+
+    // ACTUALIZA UN USUARIO QUE NO EXISTE
+    @Test
+    void updateUser_WhenUserNotExists_ThrowsEntityNotFoundException() {
+        try (MockedStatic<SecurityContextHolder> mockedSecurityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            // Arrange
+            mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.isAuthenticated()).thenReturn(true);
+            when(authentication.getName()).thenReturn("test@example.com");
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+            when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                    () -> userService.updateUser(mockUserDTO));
+            assertEquals("Usuario no encontrado para actualizar", exception.getMessage());
+            verify(userRepository).findById(1L);
+            verify(userRepository, never()).save(any(UserEntity.class));
+        }
+    }
+
+    // ACTUALIZA UN USUARIO CUYA AUTENTICACION FALLA
+    @Test
+    void updateUser_WhenAuthenticationFails_ThrowsRuntimeException() {
+        try (MockedStatic<SecurityContextHolder> mockedSecurityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            // Arrange
+            mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(null);
+
+            // Act & Assert
+            RuntimeException exception = assertThrows(RuntimeException.class,
+                    () -> userService.updateUser(mockUserDTO));
+            assertEquals("Usuario no autenticado", exception.getMessage());
+            verify(userRepository, never()).save(any(UserEntity.class));
         }
     }
 
