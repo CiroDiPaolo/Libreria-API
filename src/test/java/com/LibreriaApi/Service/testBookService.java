@@ -416,7 +416,7 @@ public class testBookService {
     void addBookService_WhenGoogleApiReturnsNull_ShouldHandleGracefully() {
         // Given
         when(googleApi.getThumbnailByISBN(bookDTO.getISBN())).thenReturn(null);
-        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         // When
         Book result = bookService.addBookService(bookDTO);
@@ -425,6 +425,48 @@ public class testBookService {
         assertNotNull(result);
         verify(googleApi, times(1)).getThumbnailByISBN(bookDTO.getISBN());
         verify(bookRepository, times(1)).save(any(Book.class));
+    }
+
+    // TEST PARA METODO AUXILIAR
+
+
+    @Test
+    void toBookWithReviewsDTO_ShouldConvertBookToDTO() {
+        // Given
+        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+
+        // When
+        BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(book.getId(), result.getId());
+        assertEquals(book.getTitle(), result.getTitle());
+        assertEquals(book.getAuthor(), result.getAuthor());
+        assertNotNull(result.getReviewsDTO());
+        assertEquals(1, result.getReviewsDTO().size());
+        assertNull(result.getReviews());
+        verify(reviewService).toDTO(review);
+    }
+
+    @Test
+    void toBookWithReviewsDTO_WithInactiveReviews_ShouldFilterOutInactiveReviews() {
+        // Given
+        Review inactiveReview = new Review();
+        inactiveReview.setIdReview(2L);
+        inactiveReview.setStatus(false);
+
+        book.setReviews(Arrays.asList(review, inactiveReview));
+        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+
+        // When
+        BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.getReviewsDTO().size());
+        verify(reviewService, times(1)).toDTO(review);
+        verify(reviewService, never()).toDTO(inactiveReview);
     }
 
 }
