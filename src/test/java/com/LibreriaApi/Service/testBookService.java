@@ -4,6 +4,8 @@ import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
+import com.LibreriaApi.Model.DTO.ReviewDTO;
+import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Service.GoogleBooksApi.GoogleBooksRequeast;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,9 +41,10 @@ public class testBookService {
     private BookService bookService;
 
     // OBJETOS DE PRUEBA (LUEGO LOS PODRIA SEPARAR EN UN DataProvider)
-    private Book book1;
-    private Book book2;
+    private Book book;
     private BookDTO bookDTO;
+    private Review review;
+    private ReviewDTO reviewDTO;
 
 
     // SETEO LOS DATOS DE LOS OBJETOS DE PRUEBA
