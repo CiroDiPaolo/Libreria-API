@@ -2,7 +2,7 @@ package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
-import com.LibreriaApi.Service.ReviewCrudService;
+import com.LibreriaApi.Service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ReviewCrudController {
 
     @Autowired
-    private ReviewCrudService reviewCrudService;
+    private ReviewService reviewService;
 
     //GET
     @Operation(
@@ -46,7 +46,7 @@ public class ReviewCrudController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
-        ReviewDTO review = reviewCrudService.getReviewByIdService(id);
+        ReviewDTO review = reviewService.getReviewByIdService(id);
         return ResponseEntity.ok(review);
     }
 
@@ -68,23 +68,23 @@ public class ReviewCrudController {
     )
     @GetMapping("/all/{id}")
     public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(@PathVariable Long id) {
-        return ResponseEntity.ok(reviewCrudService.getAllReviewsOfABookService(id));
+        return ResponseEntity.ok(reviewService.getAllReviewsOfABookService(id));
     }
 
     @GetMapping("/active/{id}")
     public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(@PathVariable Long id) {
-        return ResponseEntity.ok(reviewCrudService.getAllActiveReviewsOfABookService(id));
+        return ResponseEntity.ok(reviewService.getAllActiveReviewsOfABookService(id));
     }
 
     @GetMapping("/userReview/{id}")
     public ResponseEntity<ReviewDTO> getUserReviewByBookAndStatusActive(@PathVariable Long id) {
-        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBookAndStatusTrue(id));
+        return ResponseEntity.ok(reviewService.getReviewByUserAndBookAndStatusTrue(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{id}")
     public ResponseEntity<ReviewDTO> getUserReviewByBook(@PathVariable Long id) {
-        return ResponseEntity.ok(reviewCrudService.getReviewByUserAndBook(id));
+        return ResponseEntity.ok(reviewService.getReviewByUserAndBook(id));
     }
 
     //DELETE
@@ -108,7 +108,7 @@ public class ReviewCrudController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReviewUser(@PathVariable Long id) {
 
-        reviewCrudService.deleteByIdServiceUser(id);
+        reviewService.deleteByIdServiceUser(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -118,7 +118,7 @@ public class ReviewCrudController {
     @DeleteMapping("admin/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
 
-        reviewCrudService.deleteByIdService(id);
+        reviewService.deleteByIdService(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -138,7 +138,7 @@ public class ReviewCrudController {
     )
     @PostMapping()
     public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO review) {
-        ReviewDTO createdReview = reviewCrudService.addReviewService(review);
+        ReviewDTO createdReview = reviewService.addReviewService(review);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdReview.getIdReview())
@@ -162,7 +162,7 @@ public class ReviewCrudController {
     @PutMapping("/{id}")
     public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
 
-        ReviewDTO updatedReview = reviewCrudService.updateReviewService(id, reviewDTO);
+        ReviewDTO updatedReview = reviewService.updateReviewService(id, reviewDTO);
         return ResponseEntity.ok(updatedReview);
     }
 
