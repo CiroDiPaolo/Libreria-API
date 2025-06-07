@@ -92,7 +92,31 @@ public class AuthController {
     }
 
 
-    
+    @Operation(
+            summary = "Iniciar sesión",
+            description = "Autentica al usuario y devuelve un token JWT para acceder a endpoints protegidos",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Login exitoso, devuelve token JWT",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Object.class),
+                                    examples = @ExampleObject(
+                                            name = "Token JWT",
+                                            value = "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Credenciales inválidas",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Credenciales inválidas")
+                            )
+                    )
+            }
+    )
     @PostMapping("/login")
     public ResponseEntity<?> authLogIn(@RequestBody @Valid LogInRequest request) {
         try {
