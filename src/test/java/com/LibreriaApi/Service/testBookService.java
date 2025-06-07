@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -46,44 +47,95 @@ public class testBookService {
     private Review review;
     private ReviewDTO reviewDTO;
 
+    @BeforeEach
+    void setUp() throws ParseException{
+        // Configuro libro de prueba
+        book = new Book();
+        book.setId(1L);
+        book.setISBN("978-3-16-148410-0");
+        book.setTitle("Test Book");
+        book.setAuthor("Test Author");
+        book.setPublishingHouse("Test Publisher");
+        book.setCategory(Category.CIENCIA_FICCION);
+        book.setDescription("Test Description");
+        String fechaString = "2024-06-09";
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaBook = formato.parse(fechaString);
+        book.setStatus(true);
+        book.setUrlImage("http://test-image.com");
+
+        // Configuro DTO de prueba
+        bookDTO = new BookDTO();
+        bookDTO.setISBN("978-3-16-148410-0");
+        bookDTO.setTitle("Test Book");
+        bookDTO.setAuthor("Test Author");
+        bookDTO.setPublishingHouse("Test Publisher");
+        bookDTO.setCategory(Category.CIENCIA_FICCION);
+        bookDTO.setDescription("Test Description");
+        String fechaStringDTO = "1605-01-01";
+        SimpleDateFormat formatoDTO = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaBookDTO = formato.parse(fechaString);
+        bookDTO.setStatus(true);
+
+        // Configuro review de prueba
+        review = new Review();
+        review.setIdReview(1L);
+        review.setRating(5);
+        review.setContent("Good book");
+        review.setStatus(true);
+
+        // Configuro ReviewDTO
+        reviewDTO = new ReviewDTO(
+                1L,
+                5,
+                "Good book",
+                true,
+                1L,
+                1L
+
+        );
+        // Agrego la review al libro
+        book.setReviews(Arrays.asList(review));
+
+    }
 
     // SETEO LOS DATOS DE LOS OBJETOS DE PRUEBA
-    @BeforeEach
-    void setUp() throws ParseException {
-        book1 = new Book();
-        book1.setId(1L);
-        book1.setTitle("El Quijote");
-        book1.setAuthor("Miguel de Cervantes");
-        book1.setISBN("9788408059370");
-        book1.setPublishingHouse("Planeta");
-        book1.setCategory(Category.NOVELA);
-        book1.setDescription("Una obra maestra de la literatura");
-        String fechaString = "1605-01-01";
-        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaBook1 = formato.parse(fechaString);
-        book1.setReleaseDate(fechaBook1);
-        book1.setStatus(true);
-        book1.setUrlImage("http://example.com/quijote.jpg");
-
-        book2 = new Book();
-        book2.setId(2L);
-        book2.setTitle("Cien años de soledad");
-        book2.setAuthor("Gabriel García Márquez");
-        book2.setISBN("9788408059370"); // DESPUES PONER EL ISBN QUE CORRESPONDE, LE DEJE EL DEL QUIJOTE PARA PROBAR
-
-        bookDTO = new BookDTO();
-        bookDTO.setTitle("Nuevo Libro");
-        bookDTO.setAuthor("Nuevo Autor");
-        bookDTO.setISBN("978-84-376-0496-1");
-        bookDTO.setPublishingHouse("Editorial Test");
-        bookDTO.setCategory(Category.NOVELA);
-        bookDTO.setDescription("Descripción del libro");
-        String fechaStr = "2024-01-01";
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaBook2 = formato.parse(fechaString);
-        bookDTO.setReleaseDate(fechaBook2);
-        bookDTO.setStatus(true);
-    }
+//    @BeforeEach
+//    void setUp() throws ParseException {
+//        book1 = new Book();
+//        book1.setId(1L);
+//        book1.setTitle("El Quijote");
+//        book1.setAuthor("Miguel de Cervantes");
+//        book1.setISBN("9788408059370");
+//        book1.setPublishingHouse("Planeta");
+//        book1.setCategory(Category.NOVELA);
+//        book1.setDescription("Una obra maestra de la literatura");
+//        String fechaString = "1605-01-01";
+//        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+//        Date fechaBook1 = formato.parse(fechaString);
+//        book1.setReleaseDate(fechaBook1);
+//        book1.setStatus(true);
+//        book1.setUrlImage("http://example.com/quijote.jpg");
+//
+//        book2 = new Book();
+//        book2.setId(2L);
+//        book2.setTitle("Cien años de soledad");
+//        book2.setAuthor("Gabriel García Márquez");
+//        book2.setISBN("9788408059370"); // DESPUES PONER EL ISBN QUE CORRESPONDE, LE DEJE EL DEL QUIJOTE PARA PROBAR
+//
+//        bookDTO = new BookDTO();
+//        bookDTO.setTitle("Nuevo Libro");
+//        bookDTO.setAuthor("Nuevo Autor");
+//        bookDTO.setISBN("978-84-376-0496-1");
+//        bookDTO.setPublishingHouse("Editorial Test");
+//        bookDTO.setCategory(Category.NOVELA);
+//        bookDTO.setDescription("Descripción del libro");
+//        String fechaStr = "2024-01-01";
+//        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+//        Date fechaBook2 = formato.parse(fechaString);
+//        bookDTO.setReleaseDate(fechaBook2);
+//        bookDTO.setStatus(true);
+//    }
 
     // TESTS PARA MÉTODOS GET //////////////////////////
 
