@@ -1,6 +1,7 @@
 package com.LibreriaApi.Model.DTO;
 
 import com.LibreriaApi.Model.Multimedia;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
     
         @NotNull(message = "El ISBN no puede ser nulo")
         @Pattern(regexp = "^(\\d{9}[0-9X])|(978\\d{9}[0-9])$", message = "El ISBN debe tener 10 o 13 caracteres")
+        @JsonProperty("ISBN")
         private String ISBN;
     
         @NotNull(message = "El titulo no puede ser nulo")
