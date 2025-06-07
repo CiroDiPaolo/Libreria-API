@@ -100,46 +100,9 @@ public class testBookService {
 
     }
 
-    // SETEO LOS DATOS DE LOS OBJETOS DE PRUEBA
-//    @BeforeEach
-//    void setUp() throws ParseException {
-//        book1 = new Book();
-//        book1.setId(1L);
-//        book1.setTitle("El Quijote");
-//        book1.setAuthor("Miguel de Cervantes");
-//        book1.setISBN("9788408059370");
-//        book1.setPublishingHouse("Planeta");
-//        book1.setCategory(Category.NOVELA);
-//        book1.setDescription("Una obra maestra de la literatura");
-//        String fechaString = "1605-01-01";
-//        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-//        Date fechaBook1 = formato.parse(fechaString);
-//        book1.setReleaseDate(fechaBook1);
-//        book1.setStatus(true);
-//        book1.setUrlImage("http://example.com/quijote.jpg");
-//
-//        book2 = new Book();
-//        book2.setId(2L);
-//        book2.setTitle("Cien años de soledad");
-//        book2.setAuthor("Gabriel García Márquez");
-//        book2.setISBN("9788408059370"); // DESPUES PONER EL ISBN QUE CORRESPONDE, LE DEJE EL DEL QUIJOTE PARA PROBAR
-//
-//        bookDTO = new BookDTO();
-//        bookDTO.setTitle("Nuevo Libro");
-//        bookDTO.setAuthor("Nuevo Autor");
-//        bookDTO.setISBN("978-84-376-0496-1");
-//        bookDTO.setPublishingHouse("Editorial Test");
-//        bookDTO.setCategory(Category.NOVELA);
-//        bookDTO.setDescription("Descripción del libro");
-//        String fechaStr = "2024-01-01";
-//        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-//        Date fechaBook2 = formato.parse(fechaString);
-//        bookDTO.setReleaseDate(fechaBook2);
-//        bookDTO.setStatus(true);
-//    }
-
     // TESTS PARA MÉTODOS GET //////////////////////////
 
+    // OBTIENE UN LIBRO QUE SI EXISTE POR SU ID
     @Test
     void getBookByIdService_WhenBookExists_ShouldReturnBook() {
         // Given
@@ -155,6 +118,7 @@ public class testBookService {
         verify(bookRepository).findById(1L);
     }
 
+    // OBTIENE UN LIBRO QUE NO EXISTE POR SU ID
     @Test
     void getBookByIdService_WhenBookNotExists_ShouldThrowException() {
         // Given
@@ -169,6 +133,7 @@ public class testBookService {
         verify(bookRepository).findById(1L);
     }
 
+    // OBTIENE UN LIBRO CON SUS REVIEWS CUANDO EL LIBRO SI EXISTE
     @Test
     void getBookWithReviewsService_WhenBookExists_ShouldReturnBookWithReviewsDTO() {
         // Given
@@ -188,6 +153,7 @@ public class testBookService {
         verify(reviewService).toDTO(review);
     }
 
+    // OBTIENE UN LIBRO CON SUS REVIEWS CUANDO EL LIBRO NO EXISTE
     @Test
     void getBookWithReviewsService_WhenBookNotExists_ShouldThrowException() {
         // Given
@@ -202,6 +168,7 @@ public class testBookService {
         verify(bookRepository).findById(1L);
     }
 
+    // OBTIENE TODOS LOS LIBROS
     @Test
     void getAllBooksService_ShouldReturnAllBooks() {
         // Given
@@ -218,6 +185,7 @@ public class testBookService {
         verify(bookRepository).findAll();
     }
 
+    // OBTIENE UN LIBRO POR SU TITULO
     @Test
     void getBooksByTitleService_ShouldReturnMatchingBooks() {
         // Given
@@ -234,6 +202,7 @@ public class testBookService {
         verify(bookRepository).searchByTitleLikeIgnoreCase(title);
     }
 
+    // OBTIENE UN LIBRO POR SU ISBN CUANDO EL LIBRO EXISTE
     @Test
     void getBooksByISBNService_WhenBookExists_ShouldReturnBook() {
         // Given
@@ -249,6 +218,7 @@ public class testBookService {
         verify(bookRepository).findByISBN(isbn);
     }
 
+    // OBTIENE UN LIBRO POR SU ISBN CUANDO EL LIBRO NO EXISTE
     @Test
     void getBooksByISBNService_WhenBookNotExists_ShouldThrowException() {
         // Given
@@ -264,6 +234,7 @@ public class testBookService {
         verify(bookRepository).findByISBN(isbn);
     }
 
+    // OBTIENE UN LIBRO POR SU AUTOR
     @Test
     void getBooksByAutorService_ShouldReturnMatchingBooks() {
         // Given
@@ -280,6 +251,7 @@ public class testBookService {
         verify(bookRepository).searchByAuthorLikeIgnoreCase(author);
     }
 
+    // OBTIENE UN LIBRO POR SU EDITORIAL
     @Test
     void getBooksByPublishingHouseService_ShouldReturnMatchingBooks() {
         // Given
@@ -429,7 +401,7 @@ public class testBookService {
 
     // TEST PARA METODO AUXILIAR
 
-
+    // COMPRUEBA QUE EL METODO CONVIERTA UN BOOK A UN BookQithReviewsDTO
     @Test
     void toBookWithReviewsDTO_ShouldConvertBookToDTO() {
         // Given
@@ -449,6 +421,7 @@ public class testBookService {
         verify(reviewService).toDTO(review);
     }
 
+    // VALIDA QUE LAS REVIEWS INACTIVAS NO SE AGREGUEN AL BookWithReviewsDTO
     @Test
     void toBookWithReviewsDTO_WithInactiveReviews_ShouldFilterOutInactiveReviews() {
         // Given
