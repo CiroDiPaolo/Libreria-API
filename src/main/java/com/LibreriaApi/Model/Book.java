@@ -2,19 +2,18 @@ package com.LibreriaApi.Model;
 
 import com.LibreriaApi.Enums.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 import java.util.SimpleTimeZone;
+
 
 @Entity
 @Table(name = "Book")
@@ -30,6 +29,7 @@ public class Book extends Multimedia{
     @NotNull(message = "El ISBN no puede ser nulo")
     @Pattern(regexp = "^(\\d{9}[0-9X])|(978\\d{9}[0-9])$", message = "El ISBN debe tener 10 o 13 caracteres")
     @Column(name = "ISBN",length = 13)
+    @JsonProperty("ISBN")
     private String ISBN;
 
     @NotNull(message = "El titulo no puede ser nulo")
