@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-/*
+
 @ExtendWith(MockitoExtension.class)
 public class testBookService {
 
@@ -32,6 +32,8 @@ public class testBookService {
     private BookRepository bookRepository;
     @Mock
     private GoogleBooksRequeast googleApi;
+    @Mock
+    private ReviewService reviewService;
     // SERVICE QUE QUIERO TESTEAR
     @InjectMocks
     private BookService bookService;
@@ -341,4 +343,3 @@ public class testBookService {
     }
 
 }
-*/
