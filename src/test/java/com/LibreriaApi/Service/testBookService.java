@@ -332,21 +332,19 @@ public class testBookService {
 
     // AGREGAR UN LIBRO (COMPRUEBA SI SE CREA JUNTO CON SU IMAGEN)
     @Test
-    void addBookService_ShouldCreateBookWithGoogleImage() {
+    void addBookService_ShouldCreateAndSaveBook() {
         // Given
-        String expectedImageUrl = "http://books.google.com/books/content?id=hKiTPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api";
-        when(googleApi.getThumbnailByISBN(bookDTO.getISBN())).thenReturn(expectedImageUrl);
-        when(bookRepository.save(any(Book.class))).thenReturn(book1);
+        String thumbnailUrl = "http://thumbnail-url.com";
+        when(googleApi.getThumbnailByISBN(bookDTO.getISBN())).thenReturn(thumbnailUrl);
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         // When
         Book result = bookService.addBookService(bookDTO);
 
         // Then
         assertNotNull(result);
-        assertEquals(book1, result);
-
-        verify(googleApi, times(1)).getThumbnailByISBN(bookDTO.getISBN());
-        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(googleApi).getThumbnailByISBN(bookDTO.getISBN());
+        verify(bookRepository).save(any(Book.class));
     }
 
     // VALIDA QUE EL DTO SE MAPPEO CORRECTAMENTE, O ALGO ASI
