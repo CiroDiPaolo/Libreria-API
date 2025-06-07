@@ -300,36 +300,32 @@ public class testBookService {
 
     // ELIMINA UN LIBRO QUE EXISTE
     @Test
-    void deleteBookService_WhenExists_ShouldDeleteSuccessfully() {
+    void deleteBookService_WhenBookExists_ShouldDeleteBook() {
         // Given
-        Long id = 1L;
-        when(bookRepository.findById(id)).thenReturn(Optional.of(book1));
-        // Buscar como funciona el doNothing
-        doNothing().when(bookRepository).deleteById(id);
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        // When & Then
-        assertDoesNotThrow(() -> bookService.deleteBookService(id));
+        // When
+        bookService.deleteBookService(1L);
 
-        verify(bookRepository, times(1)).findById(id);
-        verify(bookRepository, times(1)).deleteById(id);
+        // Then
+        verify(bookRepository).findById(1L);
+        verify(bookRepository).deleteById(1L);
     }
 
-    // ELIMINAR UN LIBRO QUE NO EXISTE
+    // ELIMINA UN LIBRO QUE NO EXISTE
     @Test
-    void deleteBookService_WhenNotExists_ShouldThrowException() {
+    void deleteBookService_WhenBookNotExists_ShouldThrowException() {
         // Given
-        Long id = 99L;
-        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.deleteBookService(id)
+                () -> bookService.deleteBookService(1L)
         );
-
         assertEquals("El libro no existe", exception.getMessage());
-        verify(bookRepository, times(1)).findById(id);
-        verify(bookRepository, never()).deleteById(anyLong());
+        verify(bookRepository).findById(1L);
+        verify(bookRepository, never()).deleteById(1L);
     }
 
     // TESTS PARA MÉTODO ADD ////////////////////////
