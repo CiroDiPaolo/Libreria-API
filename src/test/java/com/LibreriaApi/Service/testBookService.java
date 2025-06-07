@@ -4,6 +4,7 @@ import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
+import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
@@ -139,118 +140,160 @@ public class testBookService {
 
     // TESTS PARA MÉTODOS GET //////////////////////////
 
-    // OBTENER UN LIBRO QUE EXISTE
     @Test
-    void getBookService_WhenExists_ShouldReturnBook() {
+    void getBookByIdService_WhenBookExists_ShouldReturnBook() {
         // Given
-        Long id = 1L;
-        when(bookRepository.findById(id)).thenReturn(Optional.of(book1));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         // When
-        Book result = bookService.getBookService(id);
+        Book result = bookService.getBookByIdService(1L);
 
         // Then
         assertNotNull(result);
-        assertEquals(book1, result);
-        assertEquals("El Quijote", result.getTitle());
-        verify(bookRepository, times(1)).findById(id);
+        assertEquals(book.getId(), result.getId());
+        assertEquals(book.getTitle(), result.getTitle());
+        verify(bookRepository).findById(1L);
     }
 
-    // OBTENER UN LIBRO QUE NO EXISTE
     @Test
-    void getBookService_WhenNotExists_ShouldThrowException() {
+    void getBookByIdService_WhenBookNotExists_ShouldThrowException() {
         // Given
-        Long id = 99L;
-        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.getBookService(id)
+                () -> bookService.getBookByIdService(1L)
         );
-
-        assertEquals("Libro no encontrado con id: " + id, exception.getMessage());
-        verify(bookRepository, times(1)).findById(id);
+        assertEquals("Libro no encontrado con id: 1", exception.getMessage());
+        verify(bookRepository).findById(1L);
     }
 
-    // OBTENER TODOS LOS LIBROS
     @Test
-    void getAllBooksService_ShouldReturnAllBooks() {
+    void getBookWithReviewsService_WhenBookExists_ShouldReturnBookWithReviewsDTO() {
         // Given
-        List<Book> expectedBooks = Arrays.asList(book1, book2);
-        when(bookRepository.findAll()).thenReturn(expectedBooks);
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
 
         // When
-        Iterable<Book> result = bookService.getAllBooksService();
+        BookWithReviewsDTO result = bookService.getBookWithReviewsService(1L);
 
         // Then
         assertNotNull(result);
-        assertEquals(expectedBooks, result);
-        verify(bookRepository, times(1)).findAll();
+        assertEquals(book.getId(), result.getId());
+        assertEquals(book.getTitle(), result.getTitle());
+        assertNotNull(result.getReviewsDTO());
+        assertEquals(1, result.getReviewsDTO().size());
+        verify(bookRepository).findById(1L);
+        verify(reviewService).toDTO(review);
     }
 
-    // OBTENER LIBRO POR UN TITULO QUE EXISTE
     @Test
-    void getBooksByTitleService_WhenExists_ShouldReturnBook() {
+    void getBookWithReviewsService_WhenBookNotExists_ShouldThrowException() {
         // Given
-        String title = "El Quijote";
-        when(bookRepository.findByTitle(title)).thenReturn(Optional.of(book1));
+        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // When
-        Optional<Book> result = bookService.getBooksByTitleService(title);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertEquals(book1, result.get());
-        verify(bookRepository, times(1)).findByTitle(title);
+        // When & Then
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> bookService.getBookWithReviewsService(1L)
+        );
+        assertEquals("Libro no encontrado con id: 1", exception.getMessage());
+        verify(bookRepository).findById(1L);
     }
 
-    // OBTENER LIBRO POR UN ISBN QUE EXISTE
     @Test
-    void getBooksByISBNService_WhenExists_ShouldReturnBook() {
+    void getAllBooksService_ShouldReturnAllBooks() {
         // Given
-        String isbn = "9788408059370";
-        when(bookRepository.findByISBN(isbn)).thenReturn(Optional.of(book1));
+        List<Book> books = Arrays.asList(book);
+        when(bookRepository.findAll()).thenReturn(books);
 
         // When
-        Optional<Book> result = bookService.getBooksByISBNService(isbn);
+        List<Book> result = bookService.getAllBooksService();
 
         // Then
-        assertTrue(result.isPresent());
-        assertEquals(book1, result.get());
-        verify(bookRepository, times(1)).findByISBN(isbn);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(book, result.get(0));
+        verify(bookRepository).findAll();
     }
 
-    // OBTENER LIBRO POR UN AUTOR QUE EXISTE
     @Test
-    void getBooksByAutorService_WhenExists_ShouldReturnBook() {
+    void getBooksByTitleService_ShouldReturnMatchingBooks() {
         // Given
-        String author = "Miguel de Cervantes";
-        when(bookRepository.findByAuthor(author)).thenReturn(Optional.of(book1));
+        String title = "Test";
+        List<Book> books = Arrays.asList(book);
+        when(bookRepository.searchByTitleLikeIgnoreCase(title)).thenReturn(books);
 
         // When
-        Optional<Book> result = bookService.getBooksByAutorService(author);
+        List<Book> result = bookService.getBooksByTitleService(title);
 
         // Then
-        assertTrue(result.isPresent());
-        assertEquals(book1, result.get());
-        verify(bookRepository, times(1)).findByAuthor(author);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(bookRepository).searchByTitleLikeIgnoreCase(title);
     }
 
-    // OBTENER LIBRO POR UNA EDITORIAL QUE EXISTE
     @Test
-    void getBooksByEditorialService_WhenExists_ShouldReturnBook() {
+    void getBooksByISBNService_WhenBookExists_ShouldReturnBook() {
         // Given
-        String editorial = "Planeta";
-        when(bookRepository.findBypublishingHouse(editorial)).thenReturn(Optional.of(book1));
+        String isbn = "978-3-16-148410-0";
+        when(bookRepository.findByISBN(isbn)).thenReturn(Optional.of(book));
 
         // When
-        Optional<Book> result = bookService.getBooksByEditorialService(editorial);
+        Book result = bookService.getBooksByISBNService(isbn);
 
         // Then
-        assertTrue(result.isPresent());
-        assertEquals(book1, result.get());
-        verify(bookRepository, times(1)).findBypublishingHouse(editorial);
+        assertNotNull(result);
+        assertEquals(book.getISBN(), result.getISBN());
+        verify(bookRepository).findByISBN(isbn);
+    }
+
+    @Test
+    void getBooksByISBNService_WhenBookNotExists_ShouldThrowException() {
+        // Given
+        String isbn = "978-3-16-148410-0";
+        when(bookRepository.findByISBN(isbn)).thenReturn(Optional.empty());
+
+        // When & Then
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> bookService.getBooksByISBNService(isbn)
+        );
+        assertEquals("El libro con ISBN " + isbn + " no existe.", exception.getMessage());
+        verify(bookRepository).findByISBN(isbn);
+    }
+
+    @Test
+    void getBooksByAutorService_ShouldReturnMatchingBooks() {
+        // Given
+        String author = "Test Author";
+        List<Book> books = Arrays.asList(book);
+        when(bookRepository.searchByAuthorLikeIgnoreCase(author)).thenReturn(books);
+
+        // When
+        List<Book> result = bookService.getBooksByAutorService(author);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(bookRepository).searchByAuthorLikeIgnoreCase(author);
+    }
+
+    @Test
+    void getBooksByPublishingHouseService_ShouldReturnMatchingBooks() {
+        // Given
+        String publishingHouse = "Test Publisher";
+        List<Book> books = Arrays.asList(book);
+        when(bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse)).thenReturn(books);
+
+        // When
+        List<Book> result = bookService.getBooksByPublishingHouseService(publishingHouse);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(bookRepository).searchByPublishinHouseLikeIgnoreCase(publishingHouse);
     }
 
     // TESTS PARA MÉTODO DELETE ////////////////////
