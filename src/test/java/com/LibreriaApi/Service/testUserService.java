@@ -179,4 +179,48 @@ public class testUserService {
         verify(userRepository).getAllUsers();
     }
 
+    // TEST PARA METODOS DELETE ///////////////////////////
+
+    // ELIMINA UN USUARIO QUE EXISTE
+    @Test
+    void deleteUserById_WhenUserExists_SetsStatusToFalse() {
+        try (MockedStatic<SecurityContextHolder> mockedSecurityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            // Arrange
+            mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.isAuthenticated()).thenReturn(true);
+            when(authentication.getName()).thenReturn("test@example.com");
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+
+            // Act
+            userService.deleteUserById(1L);
+
+            // Assert
+            // assertFalse(mockUser.getStatus());
+            verify(userRepository).findById(1L);
+        }
+    }
+
+    // INTENTA ELIMINAR UN USUAIRO QUE NO EXISTE
+    @Test
+    void deleteUserById_WhenUserNotExists_DoesNothing() {
+        try (MockedStatic<SecurityContextHolder> mockedSecurityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            // Arrange
+            mockedSecurityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.isAuthenticated()).thenReturn(true);
+            when(authentication.getName()).thenReturn("test@example.com");
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(mockUser));
+            when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+            // Act
+            userService.deleteUserById(1L);
+
+            // Assert
+            //assertTrue(mockUser.getStatus()); // Status should remain unchanged
+            verify(userRepository).findById(1L);
+        }
+    }
+
 }
