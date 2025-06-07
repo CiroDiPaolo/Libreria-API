@@ -6,6 +6,11 @@ import com.LibreriaApi.Model.LogInRequest;
 import com.LibreriaApi.Model.SignUpRequest;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,9 +42,33 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // DESPUES DIVIDIR LA LOGICA EN UNA CLASE SignUpService
+
+
+    @Operation(
+            summary = "Registrar nuevo usuario",
+            description = "Crea una nueva cuenta de usuario en el sistema con rol USER por defecto",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Usuario registrado exitosamente",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Usuario registrado exitosamente")
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Error en los datos proporcionados o email ya existe",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Error al ingresar los datos. El email ya está registrado")
+                            )
+                    )
+            }
+    )
     @PostMapping("/register")
     public ResponseEntity<String> authSignUp(@RequestBody @Valid SignUpRequest request) {
+        // DESPUES DIVIDIR LA LOGICA EN UNA CLASE SignUpService
         try {
             if (userRepository.existsByEmail(request.getEmail())) {
                 // ESTO LO ARREGLA THE BREAKBALLS (meli)
@@ -63,7 +92,7 @@ public class AuthController {
     }
 
 
-    //LOGIN CON JWT
+    
     @PostMapping("/login")
     public ResponseEntity<?> authLogIn(@RequestBody @Valid LogInRequest request) {
         try {
