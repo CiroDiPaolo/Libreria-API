@@ -380,40 +380,33 @@ public class testBookService {
 
     // ACTUALIZA UN LIBRO QUE EXISTE
     @Test
-    void updateBookService_WhenExists_ShouldUpdateSuccessfully() {
+    void updateBookService_WhenBookExists_ShouldUpdateBook() {
         // Given
-        Book bookToUpdate = new Book();
-        bookToUpdate.setId(1L);
-        bookToUpdate.setTitle("Título Actualizado");
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+        when(bookRepository.save(book)).thenReturn(book);
 
-        when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
-        when(bookRepository.save(bookToUpdate)).thenReturn(bookToUpdate);
+        // When
+        bookService.updateBookService(book);
 
-        // When & Then
-        assertDoesNotThrow(() -> bookService.updateBookService(bookToUpdate));
-
-        verify(bookRepository, times(1)).findById(1L);
-        verify(bookRepository, times(1)).save(bookToUpdate);
+        // Then
+        verify(bookRepository).findById(book.getId());
+        verify(bookRepository).save(book);
     }
 
     // ACTUALIZA UN LIBRO QUE NO EXISTE
     @Test
-    void updateBookService_WhenNotExists_ShouldThrowException() {
+    void updateBookService_WhenBookNotExists_ShouldThrowException() {
         // Given
-        Book bookToUpdate = new Book();
-        bookToUpdate.setId(99L);
-
-        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
 
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.updateBookService(bookToUpdate)
+                () -> bookService.updateBookService(book)
         );
-
         assertEquals("El libro no existe", exception.getMessage());
-        verify(bookRepository, times(1)).findById(99L);
-        verify(bookRepository, never()).save(any(Book.class));
+        verify(bookRepository).findById(book.getId());
+        verify(bookRepository, never()).save(book);
     }
 
     // TESTS PARA CASOS EDGE
