@@ -16,10 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +56,7 @@ public class testUserService {
         mockUserDTO.setPassword("newpassword");
     }
 
-    // TESTS PARA getUserByToken() ////////////////////////
+    // TESTS PARA getIdUserByToken() ////////////////////////
 
     // SI EL USUARIO ESTA AUTENTICADO, DEVUELVE SU ID
     @Test
@@ -126,4 +127,56 @@ public class testUserService {
             assertEquals("El usuario no existe", exception.getMessage());
         }
     }
+
+    // TEST PARA METODOS GET ///////////////////////////
+
+    // OBTIENE UN USUARIO QUE EXISTE
+    @Test
+    void getUserById_WhenUserExists_ReturnsUser() {
+        // Arrange
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+
+        // Act
+        UserEntity result = userService.getUserById(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(mockUser.getId(), result.getId());
+        assertEquals(mockUser.getUsername(), result.getUsername());
+        verify(userRepository).findById(1L);
+    }
+
+    // BUSCA OBTENER UN USUARIO QUE NO EXISTE
+    @Test
+    void getUserById_WhenUserNotExists_ThrowsEntityNotFoundException() {
+        // Arrange
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> userService.getUserById(1L));
+        assertEquals("No se encontro usuario con el id: 1", exception.getMessage());
+        verify(userRepository).findById(1L);
+    }
+
+    // OBTIENE A TODOS LOS USUARIOS
+    @Test
+    void getAllUsers_ReturnsListOfUsers() {
+        // Arrange
+        UserEntity user2 = new UserEntity();
+        user2.setId(2L);
+        user2.setUsername("user2");
+        List<UserEntity> expectedUsers = Arrays.asList(mockUser, user2);
+        when(userRepository.getAllUsers()).thenReturn(expectedUsers);
+
+        // Act
+        List<UserEntity> result = userService.getAllUsers();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(expectedUsers, result);
+        verify(userRepository).getAllUsers();
+    }
+
 }
