@@ -156,6 +156,24 @@ public class BookCrudController {
     @GetMapping("/search/publishingHouse/{publishingHouse}")
     public ResponseEntity<List<Book>> searchBookByEditorial(@PathVariable String publishingHouse) { return ResponseEntity.ok(bookService.getBooksByPublishingHouseService(publishingHouse)); }
 
+    @Operation(
+            summary = "Dar de baja un libro por su ID",
+            description = "Busca el libro por su ID y hace un soft delete.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Libro dado de baja exitosamente."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No se encontró un libro con el ID proporcionado."
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No tiene permisos para realizar esta operación."
+                    )
+            }
+    )
     //METODOS DELETE
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
@@ -165,6 +183,22 @@ public class BookCrudController {
 
     }
 
+    @Operation(
+            summary = "Crear y guardar un libro en la base de datos",
+            description = "Se introducen los datos del libro para poder crearlo",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Libro creado exitosamente.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Book.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No tiene permisos para realizar esta operación."
+                    )
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<Book> createBook(@RequestBody BookDTO book) {
@@ -174,6 +208,20 @@ public class BookCrudController {
 
     }
 
+    @Operation(
+            summary = "Actualizar un libro",
+            description = "Actualiza los datos de un libro.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Libro actualizado exitosamente."
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No tiene permisos para realizar esta operación."
+                    )
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping()
     public void updateBook(@RequestBody Book book) {
