@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -137,7 +138,7 @@ public class ReviewCrudController {
             }
     )
     @PostMapping()
-    public ResponseEntity<ReviewDTO> addReview(@RequestBody ReviewDTO review) {
+    public ResponseEntity<ReviewDTO> addReview(@Valid @RequestBody ReviewDTO review) {
         ReviewDTO createdReview = reviewService.addReviewService(review);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -160,7 +161,7 @@ public class ReviewCrudController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO reviewDTO) {
 
         ReviewDTO updatedReview = reviewService.updateReviewService(id, reviewDTO);
         return ResponseEntity.ok(updatedReview);

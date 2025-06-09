@@ -1,5 +1,7 @@
 package com.LibreriaApi.Service;
 
+import com.LibreriaApi.Exceptions.AccessDeniedUserException;
+import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
@@ -8,6 +10,7 @@ import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
 import com.LibreriaApi.Service.GoogleBooksApi.GoogleBooksRequeast;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,24 +57,21 @@ public class BookService {
     public List<Book> getBooksByPublishingHouseService(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
 
     //METODOS DELETE
+    @Transactional
     public void deleteBookService(Long id) {
-
-        Optional<Book> book = bookRepository.findById(id);
-
-        if (book.isPresent()) {
-
-            bookRepository.deleteById(id);
-
+        if (bookRepository.existsById(id)) {
+            bookRepository.logicallyDeleteById(id);
         } else {
-
             throw new EntityNotFoundException("El libro no existe");
-
         }
     }
 
     //METODO ADD
+    @Transactional
     public Book addBookService(BookDTO dto) {
-
+        if(bookRepository.existsByISBN(dto.getISBN())){
+            throw new EntityAlreadyExistsException("Ya existe un libro con el ISBN: " + dto.getISBN());
+        }
         String url = googleApi.getThumbnailByISBN(dto.getISBN());
 
         Book book = new Book();
@@ -91,20 +91,20 @@ public class BookService {
     }
 
     //METODO UPDATE
-    public void updateBookService(Book book) {
+    @Transactional
+    public Book updateBookService(Long idBook,BookDTO bookDTO) {
 
-        Optional<Book> bookOptional = bookRepository.findById(book.getId());
+        Book book = bookRepository.findById(idBook)
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrada con id: " + idBook));
 
-        if (bookOptional.isPresent()) {
-
-            bookRepository.save(book);
-
-        } else {
-
-            throw new EntityNotFoundException("El libro no existe");
-
-        }
-
+        book.setStatus(bookDTO.getStatus());
+        book.setAuthor(bookDTO.getAuthor());
+        book.setTitle(bookDTO.getTitle());
+        book.setCategory(bookDTO.getCategory());
+        book.setDescription(bookDTO.getDescription());
+        book.setPublishingHouse(book.getPublishingHouse());
+        book.setReleaseDate(bookDTO.getReleaseDate());
+        return book;
     }
 
     public BookWithReviewsDTO toBookWithReviewsDTO(Book book) {
