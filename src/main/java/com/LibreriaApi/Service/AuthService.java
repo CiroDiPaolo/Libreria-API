@@ -30,18 +30,20 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public String registerUser(SignUpRequest request) {
+        // VALIDO QUE EL EMAIL NO ESTE EN USO
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
+        // SETEO LOS DATOS DEL USUARIO
         UserEntity newUser = new UserEntity();
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
-        newUser.setPass(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(Role.USER);
-        newUser.setStatus(true);
+        newUser.setPass(passwordEncoder.encode(request.getPassword())); // ENCRIPTO LA CONTRASEÑA
+        newUser.setRole(Role.USER); // ROL POR DEFECTO ES "USER"
+        newUser.setStatus(true); // ESTADO EN TRUE
 
-        userRepository.save(newUser);
+        userRepository.save(newUser); // GUARDO EL USUARIO
         return "Usuario registrado exitosamente";
     }
 
@@ -57,7 +59,7 @@ public class AuthService {
         );
 
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        return jwtUtil.generateToken(userDetails);
+        return jwtUtil.generateToken(userDetails); // GENERO EL TOKEN Y SE LO PASO A LA CONTROLADORA
     }
 
 }

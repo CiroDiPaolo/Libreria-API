@@ -35,17 +35,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-    /*
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtUtil jwtUtil;
-*/
+    
     @Autowired
     private AuthService authService;
 
@@ -74,30 +64,16 @@ public class AuthController {
     )
     @PostMapping("/register")
     public ResponseEntity<String> authSignUp(@RequestBody @Valid SignUpRequest request) {
-        // DESPUES DIVIDIR LA LOGICA EN UNA CLASE SignUpService
         try {
-            if (userRepository.existsByEmail(request.getEmail())) {
-                // ESTO LO ARREGLA THE BREAKBALLS (meli)
-                throw new RuntimeException("El email ya está registrado");
-            }
 
-            // CREO UN USUARIO Y SETEO SUS ATRIBUTOS CON LOS DATOS QUE VIENEN DEL SIGNUPREQUEST
-            UserEntity newUser = new UserEntity();
-            newUser.setUsername(request.getUsername());
-            newUser.setEmail(request.getEmail());
-            newUser.setPass(passwordEncoder.encode(request.getPassword()));
-            newUser.setRole(Role.USER); // ROLE IGUAL A USER POR DEFECTO
-            newUser.setStatus(true); // SETEO ESTADO DEL USUARIO EN TRUE
-            // GUARDO AL USUARIO EN LA BDD
-            userRepository.save(newUser);
+            String result = authService.registerUser(request);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
-
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al ingresar los datos. " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al ingresar los datos. " + e.getMessage());
         }
     }
-
 
     @Operation(
             summary = "Iniciar sesión",
@@ -121,33 +97,27 @@ public class AuthController {
                                     schema = @Schema(implementation = String.class),
                                     examples = @ExampleObject(value = "Credenciales inválidas")
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Usuario inactivo",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = String.class),
+                                    examples = @ExampleObject(value = "Su cuenta esta inhabilitada.")
+                            )
                     )
             }
     )
     @PostMapping("/login")
     public ResponseEntity<?> authLogIn(@RequestBody @Valid LogInRequest request) {
         try {
-            // VALIDAR ESTADO DEL USUARIO ANTES DE AUTENTICAR
-            Optional<UserEntity> userOpt = userRepository.findByEmail(request.getEmail());
-            if (userOpt.isPresent() && !userOpt.get().getStatus()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Su cuenta esta inhabilitada.");
-            }
 
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+            String token = authService.authenticateUser(request);
 
-            // DEVUELVE EL USUARIO AUNTENTICADO
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            // USA EL USUARIO AUTENTICADO PARA DEVOLVER EL TOKEN
-            String jwt = jwtUtil.generateToken(userDetails);
-
-            return ResponseEntity.ok().body(Collections.singletonMap("token", jwt));
+            return ResponseEntity.ok().body(Collections.singletonMap("token", token));
         } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
     }
