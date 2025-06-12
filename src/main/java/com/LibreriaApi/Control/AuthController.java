@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -81,6 +83,7 @@ public class AuthController {
             newUser.setEmail(request.getEmail());
             newUser.setPass(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.USER); // ROLE IGUAL A USER POR DEFECTO
+            newUser.setStatus(true); // SETEO ESTADO DEL USUARIO EN TRUE
             // GUARDO AL USUARIO EN LA BDD
             userRepository.save(newUser);
 
@@ -120,6 +123,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authLogIn(@RequestBody @Valid LogInRequest request) {
         try {
+            // VALIDAR ESTADO DEL USUARIO ANTES DE AUTENTICAR
+            Optional<UserEntity> userOpt = userRepository.findByEmail(request.getEmail());
+            if (userOpt.isPresent() && !userOpt.get().getStatus()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Su cuenta esta inhabilitada.");
+            }
+
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
@@ -130,7 +140,10 @@ public class AuthController {
             String jwt = jwtUtil.generateToken(userDetails);
 
             return ResponseEntity.ok().body(Collections.singletonMap("token", jwt));
-        } catch (AuthenticationException e) {
+        } catch (DisabledException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+        catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
     }
