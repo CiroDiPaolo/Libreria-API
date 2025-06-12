@@ -81,6 +81,7 @@ public class AuthController {
             newUser.setEmail(request.getEmail());
             newUser.setPass(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.USER); // ROLE IGUAL A USER POR DEFECTO
+            newUser.setStatus(true); // SETEO ESTADO DEL USUARIO EN TRUE
             // GUARDO AL USUARIO EN LA BDD
             userRepository.save(newUser);
 
