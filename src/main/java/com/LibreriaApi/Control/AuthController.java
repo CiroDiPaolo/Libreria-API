@@ -6,6 +6,7 @@ import com.LibreriaApi.Model.LogInRequest;
 import com.LibreriaApi.Model.SignUpRequest;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
+import com.LibreriaApi.Service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -35,6 +36,7 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class AuthController {
 
+    /*
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -43,7 +45,9 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
-
+*/
+    @Autowired
+    private AuthService authService;
 
 
     @Operation(
