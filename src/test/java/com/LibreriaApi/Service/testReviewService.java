@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class testReviewService {
@@ -215,5 +214,36 @@ public class testReviewService {
         assertEquals(testReviewId, result.getIdReview());
         verify(reviewRepository).findByMultimediaIdAndUserId(testBookId, testUserId);
     }
+
+    // METODOS DELETE /////////////////////
+
+    // ELIMINA UNA REVIEW POR SU ID
+    @Test
+    void deleteByIdService_Success() {
+        // Arrange
+        when(reviewRepository.existsById(1L)).thenReturn(true);
+
+        // Act
+        reviewService.deleteByIdService(1L);
+
+        // Assert
+        verify(reviewRepository).logicallyDeleteById(1L);
+    }
+
+    // INTENTA ELIMINAR UNA REVIEW POR SU ID PERO NO EXISTE
+    @Test
+    void deleteByIdService_ReviewNotExists() {
+        // Arrange
+        when(reviewRepository.existsById(999L)).thenReturn(false);
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> reviewService.deleteByIdService(999L)
+        );
+        assertEquals("La review con id 999 no existe", exception.getMessage());
+        verify(reviewRepository, never()).logicallyDeleteById(anyLong());
+    }
+
 
 }
