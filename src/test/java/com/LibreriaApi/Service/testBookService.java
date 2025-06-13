@@ -369,14 +369,15 @@ public class testBookService {
     @Test
     void updateBookService_WhenBookNotExists_ShouldThrowException() {
         // Given
+        Long id = 1L;
         when(bookRepository.findById(book.getId())).thenReturn(Optional.empty());
 
         // When & Then
-      //  EntityNotFoundException exception = assertThrows(
-       //         EntityNotFoundException.class,
-         //       () -> bookService.updateBookService(book)
-        //);
-       // assertEquals("El libro no existe", exception.getMessage());
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> bookService.updateBookService(id, bookDTO)
+        );
+        assertEquals("El libro no existe", exception.getMessage());
         verify(bookRepository).findById(book.getId());
         verify(bookRepository, never()).save(book);
     }
