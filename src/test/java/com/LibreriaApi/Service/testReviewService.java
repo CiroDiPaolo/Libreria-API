@@ -245,5 +245,65 @@ public class testReviewService {
         verify(reviewRepository, never()).logicallyDeleteById(anyLong());
     }
 
+    // METODOS CREATE ////////////////////////
+
+    // CREA UNA RESEÑA
+
+    // AGREGA UNA RESEÑA
+    @Test
+    void addReviewService_Success() {
+        // Arrange
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(reviewRepository.save(any(Review.class))).thenReturn(testReview);
+
+        // Act
+        ReviewDTO result = reviewService.addReviewService(testReviewDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1L, result.getIdUser());
+        assertTrue(result.getStatus());
+        assertEquals("Excelente libro", result.getContent());
+        assertEquals(5, result.getRating());
+
+        verify(userService).getIdUserByToken();
+        verify(reviewRepository).save(any(Review.class));
+    }
+
+    // INTENTA AGREGAR UNA RESEÑA PERO EL LIBRO NO EXISTE
+    @Test
+    void addReviewService_BookNotFound() {
+        // Arrange
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(bookRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> reviewService.addReviewService(testReviewDTO)
+        );
+        assertEquals("Multimedia no encontrado con id: 999", exception.getMessage());
+        verify(reviewRepository, never()).save(any(Review.class));
+    }
+
+    // INTENTA AGREGAR UNA RESEÑA PERO EL USUARIO NO EXISTE
+    @Test
+    void addReviewService_UserNotFound() {
+        // Arrange
+        when(userService.getIdUserByToken()).thenReturn(999L);
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(testBook));
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> reviewService.addReviewService(testReviewDTO)
+        );
+        assertEquals("Usuario no encontrado con id: 999", exception.getMessage());
+        verify(reviewRepository, never()).save(any(Review.class));
+    }
+
 
 }
