@@ -1,5 +1,6 @@
 package com.LibreriaApi.Service;
 
+import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
@@ -247,8 +248,6 @@ public class testReviewService {
 
     // METODOS CREATE ////////////////////////
 
-    // CREA UNA RESEÑA
-
     // AGREGA UNA RESEÑA
     @Test
     void addReviewService_Success() {
@@ -305,5 +304,81 @@ public class testReviewService {
         verify(reviewRepository, never()).save(any(Review.class));
     }
 
+    // METODOS UPDATE /////////////////////////
+
+    // ACTUALIZA UNA RESEÑA
+    @Test
+    void updateReviewService_Success() {
+        // Arrange
+        ReviewDTO updateDTO = new ReviewDTO(1L, 3, "Contenido actualizado", true, 1L, 1L);
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
+
+        // Act
+        ReviewDTO result = reviewService.updateReviewService(1L, updateDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Contenido actualizado", result.getContent());
+        assertEquals(3, result.getRating());
+        assertEquals(testReview.getContent(), "Contenido actualizado");
+        assertEquals(testReview.getRating(), 3);
+    }
+
+    // ACTUALIZA UNA RESEÑA PERO NO EXISTE
+    @Test
+    void updateReviewService_ReviewNotFound() {
+        // Arrange
+        ReviewDTO updateDTO = new ReviewDTO(1L, 3, "Contenido actualizado", true, 1L, 1L);
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(reviewRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> reviewService.updateReviewService(999L, updateDTO)
+        );
+        assertEquals("Review no encontrada id = 999", exception.getMessage());
+    }
+
+    // ACTUALIZA UNA RESEÑA PERO NO PERTENECE AL USUARIO
+    @Test
+    void updateReviewService_ReviewNotBelongsToUser() {
+        // Arrange
+        ReviewDTO updateDTO = new ReviewDTO(1L, 3, "Contenido actualizado", true, 2L, 1L);
+        Review reviewFromOtherUser = new Review();
+        reviewFromOtherUser.setIdReview(1L);
+        reviewFromOtherUser.setStatus(true);
+        UserEntity otherUser = new UserEntity();
+        otherUser.setId(2L);
+        reviewFromOtherUser.setUser(otherUser);
+
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(reviewFromOtherUser));
+
+        // Act & Assert
+        AccessDeniedUserException exception = assertThrows(
+                AccessDeniedUserException.class,
+                () -> reviewService.updateReviewService(1L, updateDTO)
+        );
+        assertEquals("La review no corresponde a su usuario", exception.getMessage());
+    }
+
+    // ACTUALIZA UNA RESEÑA PERO ESTA DADA DE BAJA
+    @Test
+    void updateReviewService_ReviewDeleted() {
+        // Arrange
+        ReviewDTO updateDTO = new ReviewDTO(1L, 3, "Contenido actualizado", true, 1L, 1L);
+        testReview.setStatus(false); // Review eliminada
+        when(userService.getIdUserByToken()).thenReturn(1L);
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
+
+        // Act & Assert
+        AccessDeniedUserException exception = assertThrows(
+                AccessDeniedUserException.class,
+                () -> reviewService.updateReviewService(1L, updateDTO)
+        );
+        assertEquals("La reseña esta eliminada", exception.getMessage());
+    }
 
 }
