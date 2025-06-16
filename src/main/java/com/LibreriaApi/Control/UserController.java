@@ -47,7 +47,7 @@ public class UserController {
     }
 
     //metodo delete
-    @PreAuthorize("hasrole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idUser}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long idUser){
 

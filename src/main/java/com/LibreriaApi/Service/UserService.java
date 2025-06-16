@@ -58,9 +58,7 @@ public class UserService {
         Optional<UserEntity> user = userRepository.findById(getIdUserByToken());
 
         if(user.isPresent()){
-
             user.get().setStatus(false);
-
         }
 
     }
