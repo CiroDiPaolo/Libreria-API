@@ -107,6 +107,9 @@ public class ReviewService {
     @Transactional
     public ReviewDTO addReviewService(ReviewDTO review) {
         Long idUser = userService.getIdUserByToken();
+        if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, review.getIdMultimedia())){
+            throw new AccessDeniedUserException("El usuario ya tiene una review activa para este contenido");
+        }
         review.setIdUser(idUser);
         review.setStatus(true);
         return this.toDTO(reviewRepository.save(this.toModel(review)));
