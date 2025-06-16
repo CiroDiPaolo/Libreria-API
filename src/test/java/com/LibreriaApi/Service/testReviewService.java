@@ -30,15 +30,14 @@ public class testReviewService {
 
     @Mock
     private ReviewRepository reviewRepository;
-
     @Mock
     private BookRepository bookRepository;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private UserService userService;
+    @Mock
+    private MultimediaRepository multimediaRepository;
 
     @InjectMocks
     private ReviewService reviewService;
@@ -252,8 +251,10 @@ public class testReviewService {
     @Test
     void addReviewService_Success() {
         // Arrange
+        // Simulo que estoy ingresando una reseña:
+        ReviewDTO inputDTO = new ReviewDTO(null, 4, "Buen libro", null, null, 1L);
         when(userService.getIdUserByToken()).thenReturn(1L);
-        when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
+        when(multimediaRepository.findById(1L)).thenReturn(Optional.of(testBook));
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(reviewRepository.save(any(Review.class))).thenReturn(testReview);
 

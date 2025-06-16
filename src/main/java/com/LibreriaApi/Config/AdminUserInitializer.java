@@ -4,6 +4,7 @@ import com.LibreriaApi.Enums.Role;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -17,15 +18,19 @@ public class AdminUserInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ESTO SE PODRIA CONFIGURAR CON VARIABLES DE ENTORNO, PARA NO EXPONER LAS CREDENCIALES
+    @Value("${ADMIN_EMAIL}")
+    private String adminEmail;
+
+    @Value("${ADMIN_PASSWORD}")
+    private String adminPassword;
+    
     @Override
     public void run(String... args) throws Exception {
-        String adminEmail = "admin@admin.com";
         if (!userRepository.existsByEmail(adminEmail)) {
             UserEntity admin = new UserEntity();
             admin.setUsername("admin");
             admin.setEmail(adminEmail);
-            admin.setPass(passwordEncoder.encode("Admin123"));
+            admin.setPass(passwordEncoder.encode(adminPassword));
             admin.setRole(Role.ADMIN);
             admin.setStatus(true);
             userRepository.save(admin);
