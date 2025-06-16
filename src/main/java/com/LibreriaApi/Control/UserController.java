@@ -33,6 +33,15 @@ public class UserController {
 
     }
 
+    @Operation(
+            summary = "Obtiene la informacion del usuario logueado",
+            description = "Devuelve los datos del usuario actualmente autenticado, incluyendo su lista de favoritos."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Informacion del usuario logueado",
+                    content = @Content(schema = @Schema(implementation = UserEntity.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+    })
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping()
     public ResponseEntity<UserEntity> getUserLogged(){
@@ -51,7 +60,18 @@ public class UserController {
 
     }
 
-    //metodo delete
+    //METODO DELETE
+    @Operation(
+            summary = "Da de baja un usuario elegido",
+            description = "Permite a un usuario con rol de ADMIN desactivar un usuario."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuario dado de baja",
+                    content = @Content(schema = @Schema(implementation = UserEntity.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "400", description = "El usuario ya estaba inactivo"),
+            @ApiResponse(responseCode = "403", description = "No autorizado (no tiene rol ADMIN)")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idUser}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long idUser){
