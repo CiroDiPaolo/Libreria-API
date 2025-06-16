@@ -3,6 +3,11 @@ package com.LibreriaApi.Control;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -66,13 +71,24 @@ public class UserController {
 
     }
 
+    @Operation(
+            summary = "Activa un usuario previamente desactivado",
+            description = "Se necesita el rol ADMIN para dar de alta al usuario."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario activado correctamente",
+                    content = @Content(schema = @Schema(implementation = UserEntity.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "400", description = "El usuario ya estaba activo"),
+            @ApiResponse(responseCode = "403", description = "No autorizado (no tiene rol ADMIN)")
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/activate/{id}")
     public ResponseEntity<UserEntity> activateUser(@PathVariable Long id){
 
-        userService.activateUserById(id);
+        UserEntity user = userService.activateUserById(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(user);
 
     }
 
