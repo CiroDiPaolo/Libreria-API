@@ -54,14 +54,17 @@ public class UserService {
 
     //metodo delete
     public void deleteUserById(Long id){
-
-        Optional<UserEntity> user = userRepository.findById(getIdUserByToken());
-
-        if(user.isPresent()){
-
-            user.get().setStatus(false);
-
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SI YA ESTA INACTIVO TIRO UNA EXCEPCION
+        if (!user.getStatus()) {
+            throw new IllegalStateException("El usuario ya está inactivo");
         }
+        // SETEO SU ESTADO EN FALSE, LO DOY DE BAJA
+        user.setStatus(false);
+        // GUARDO LOS CAMBIOS
+        userRepository.save(user);
 
     }
 
@@ -81,7 +84,22 @@ public class UserService {
         } else {
             throw new EntityNotFoundException("Usuario no encontrado para actualizar");
         }
+    }
 
+    // DA DE ALTA UN USUARIO QUE SE ENCONTRABA DESACTIVADO
+    public UserEntity activateUserById(Long id){
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SI YA ESTA ACTIVO TIRO UNA EXCEPCION
+        if (user.getStatus()) {
+            throw new IllegalStateException("El usuario ya está activo");
+        }
+        // SETEO SU ESTADO EN TRUE, LO DOY DE ALTA
+        user.setStatus(true);
+        // GUARDO LOS CAMBIOS Y RETORNO EL USUARIO QUE SE DIO DE ALTA
+        userRepository.save(user);
+        return user;
     }
 
 
