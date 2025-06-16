@@ -34,7 +34,7 @@ public class BookStageController {
 
     }
 
-    @PreAuthorize("hasrole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/all")
     public ResponseEntity<List<BookStage>> getAllBookStageOfUser(){
 
@@ -42,7 +42,7 @@ public class BookStageController {
 
     }
 
-    @PreAuthorize("hasrole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all/{id}")
     public ResponseEntity<List<BookStage>> getAllBookStageOfAUser(@PathVariable Long id){
 
@@ -52,7 +52,7 @@ public class BookStageController {
 
     //metodos DELETE
     //recibe el id del stage y elimina el del usuario logueado
-    @PreAuthorize("hasrole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookStageOfUserById(@PathVariable Long id){
 
@@ -63,7 +63,7 @@ public class BookStageController {
     }
 
     //recibe el id de un usuario al cual se le quiera eliminar un bookStage y el id del bookStage a travez del dto
-    @PreAuthorize("hasrole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{idUser}/{idBook}")
     public ResponseEntity<Void> deleteBookStageOfAUserById(@PathVariable Long idUser, @PathVariable Long idBook){
 
@@ -74,7 +74,7 @@ public class BookStageController {
     }
 
     //Metodos put
-    @PreAuthorize("hasrole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping()
     public ResponseEntity<BookStage> updateBookStage(@RequestBody BookStageDTO bookStageDTO){
 

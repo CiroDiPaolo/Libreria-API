@@ -22,7 +22,6 @@ public class ReviewDTO {
 
     private Boolean status;
 
-
     private Long idUser;
 
     @NotNull
