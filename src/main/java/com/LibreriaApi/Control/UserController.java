@@ -53,6 +53,22 @@ public class UserController {
 
     }
 
+    @Operation(
+            summary = "Perfil del usuario logueado",
+            description = "Muestra la informacion a modo de perfil, ignorando atributos como role o status"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna un UserProfileDTO",
+                    content = @Content(schema = @Schema(implementation = UserProfileDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @GetMapping()
+    public ResponseEntity<UserProfileDTO> getUserProfile() {
+        Long id = userService.getIdUserByToken();
+        return ResponseEntity.ok(userService.getUserProfile(id));
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public List<UserEntity> getAllUsers(){
