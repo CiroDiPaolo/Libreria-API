@@ -1,8 +1,14 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -73,14 +79,31 @@ public class BookStageController {
 
     }
 
+
+
     //Metodos put
     @PreAuthorize("hasRole('USER')")
     @PutMapping()
+    @Operation(
+            summary = "Actualiza el estado de lectura de un libro",
+            description = "Permite a un usuario actualizar el estado de lectura de un libro de su lista.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Estado de lectura actualizado correctamente."
+                    ),
+                    @ApiResponse(responseCode = "404",
+                            description = "Usuario o BookStage no encontrado",
+                            content = @Content(
+                                    schema = @Schema(implementation = String.class)))
+            }
+    )
     public ResponseEntity<BookStage> updateBookStage(@RequestBody BookStageDTO bookStageDTO){
 
         return ResponseEntity.ok(bookStageService.updateBookStage(bookStageDTO));
 
     }
+
 
 
 }
