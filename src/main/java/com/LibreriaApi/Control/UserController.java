@@ -63,7 +63,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    @GetMapping()
+    @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getUserProfile() {
         Long id = userService.getIdUserByToken();
         return ResponseEntity.ok(userService.getUserProfile(id));
