@@ -54,12 +54,13 @@ public class UserService {
 
     //metodo delete
     public void deleteUserById(Long id){
-
-        Optional<UserEntity> user = userRepository.findById(getIdUserByToken());
-
-        if(user.isPresent()){
-            user.get().setStatus(false);
-        }
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SETEO SU ESTADO EN FALSE, LO DOY DE BAJA
+        user.setStatus(false);
+        // GUARDO LOS CAMBIOS
+        userRepository.save(user);
 
     }
 
