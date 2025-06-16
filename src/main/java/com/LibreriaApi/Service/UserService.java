@@ -47,7 +47,14 @@ public class UserService {
 
     }
 
+    // MOSTRAR PERFIL DEL USUARIO LOGUEADO
+    public UserProfileDTO getUserProfile(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró usuario con el id: " + id));
 
+        // RETORNO UN UserProfileDTO PARA NO MOSTRAR DATOS COMO id, password, role o status
+        return new UserProfileDTO(user.getUsername(), user.getEmail(), user.getFavoriteList());
+    }
 
     public List<UserEntity> getAllUsers(){
 
