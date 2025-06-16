@@ -66,4 +66,14 @@ public class UserController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/activate/{id}")
+    public ResponseEntity<UserEntity> activateUser(@PathVariable Long id){
+
+        userService.activateUserById(id);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
 }

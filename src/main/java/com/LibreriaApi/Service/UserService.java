@@ -80,6 +80,17 @@ public class UserService {
         } else {
             throw new EntityNotFoundException("Usuario no encontrado para actualizar");
         }
+    }
+
+    // DA DE ALTA UN USUARIO QUE SE ENCONTRABA DESACTIVADO
+    public void activateUserById(Long id){
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SETEO SU ESTADO EN TRUE, LO DOY DE ALTA
+        user.setStatus(true);
+        // GUARDO LOS CAMBIOS
+        userRepository.save(user);
 
     }
 
