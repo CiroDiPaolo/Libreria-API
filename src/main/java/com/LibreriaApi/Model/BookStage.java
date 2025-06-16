@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "BookStage")
@@ -33,4 +34,16 @@ public class BookStage {
     @NotNull(message = "El estado del libro no puede ser nulo")
     @Enumerated(EnumType.STRING)
     private Stage stage;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BookStage bookStage = (BookStage) o;
+        return Objects.equals(id, bookStage.id) && Objects.equals(user, bookStage.user) && Objects.equals(book, bookStage.book) && stage == bookStage.stage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, book, stage);
+    }
 }

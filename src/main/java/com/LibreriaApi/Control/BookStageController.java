@@ -57,7 +57,7 @@ public class BookStageController {
     }
 
     //metodos DELETE
-    //recibe el id del stage y elimina el del usuario logueado
+    //RECIBE EL ID DEL BookStage Y LO ELIMINA DE LA LISTA DEL USUARIO LOGUEADO
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookStageOfUserById(@PathVariable Long id){

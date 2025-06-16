@@ -80,13 +80,14 @@ public class BookStageService {
         Long idUser = userService.getIdUserByToken();
         UserEntity user = userRepository.findById(idUser)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + idUser));
+        // BUSCO EL BookStage QUE EL USUARIO QUIERE ELIMINAR
         BookStage bookStage = bookStageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id: " + id));
-
+        // VALIDO QUE EL BookStage PERTENEZCA A LA LISTA DEL USUARIO
         if (!user.getFavoriteList().contains(bookStage)) {
             throw new EntityNotFoundException("El usuario no contiene este libro en favoritos");
         }
-
+        // LO REMUEVO DE LA LISTA
         user.getFavoriteList().remove(bookStage);
         userRepository.save(user);
     }
