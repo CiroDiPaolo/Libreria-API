@@ -3,6 +3,7 @@ package com.LibreriaApi.Control;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bookstage")
+@Tag(name = "Book Stage", description = "Operaciones sobre Book Stage")
 public class BookStageController {
 
     @Autowired

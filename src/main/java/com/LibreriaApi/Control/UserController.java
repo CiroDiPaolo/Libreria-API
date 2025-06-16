@@ -3,6 +3,7 @@ package com.LibreriaApi.Control;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "Users", description = "Operaciones sobre users")
 public class UserController {
 
     @Autowired
