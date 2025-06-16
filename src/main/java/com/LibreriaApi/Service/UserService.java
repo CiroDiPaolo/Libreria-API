@@ -3,6 +3,7 @@ package com.LibreriaApi.Service;
 import com.LibreriaApi.Config.JwtUtil;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
+import com.LibreriaApi.Model.DTO.UserProfileDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +40,14 @@ public class UserService {
         }
     }
 
-    //metodos get
+    //METODOS GET
     public UserEntity getUserById(Long id){
 
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
 
     }
+
+
 
     public List<UserEntity> getAllUsers(){
 

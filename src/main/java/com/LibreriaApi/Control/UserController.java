@@ -1,6 +1,7 @@
 package com.LibreriaApi.Control;
 
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
+import com.LibreriaApi.Model.DTO.UserProfileDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
