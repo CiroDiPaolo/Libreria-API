@@ -3,6 +3,7 @@ package com.LibreriaApi.Control;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
+import com.LibreriaApi.Model.DTO.LoadBookDTO;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -206,6 +207,18 @@ public class BookCrudController {
     @PostMapping()
     public ResponseEntity<Book> createBook(@Valid @RequestBody BookDTO book) {
         Book newBook = bookService.addBookService(book);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newBook.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(newBook);
+
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
+    public ResponseEntity<Book> createBookWithAPI(@Valid @RequestBody LoadBookDTO book) {
+        Book newBook = bookService.addBookWithAPI(book);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newBook.getId())
