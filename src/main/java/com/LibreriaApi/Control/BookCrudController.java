@@ -215,6 +215,22 @@ public class BookCrudController {
 
     }
 
+    @Operation(
+            summary = "Crear y guardar un libro en la base de datos",
+            description = "Se introducen datos por formulario y otros datos se obtienen por la API",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Libro creado exitosamente.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Book.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No tiene permisos para realizar esta operación."
+                    )
+            }
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<Book> createBookWithAPI(@Valid @RequestBody LoadBookDTO book) {
