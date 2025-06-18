@@ -31,6 +31,8 @@ public class GoogleBooksRequeast {
         return "";
     }
 
+
+
     // METODO PARA OBTENER EL volumeInfo DESDE LA API, CONTIENE TODA LA INFORMACION DEL LIBRO
     private JSONObject getVolumeInfo(String isbn) {
         try {
@@ -48,6 +50,31 @@ public class GoogleBooksRequeast {
             System.out.println("Error al obtener datos desde Google Books: " + e.getMessage());
         }
         return null;
+    }
+
+    // Clase auxiliar para guardar la info obtenida de la API
+    public static class BookInfo {
+        private final String title;
+        private final String publisher;
+        private final String date;
+
+        public BookInfo(String title, String publisher, String date) {
+            this.title = title;
+            this.publisher = publisher;
+            this.date = date;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getPublisher() {
+            return publisher;
+        }
+
+        public String getDate() {
+            return date;
+        }
     }
 
 
