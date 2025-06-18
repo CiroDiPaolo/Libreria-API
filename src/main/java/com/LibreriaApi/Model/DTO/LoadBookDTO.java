@@ -28,7 +28,7 @@ public class LoadBookDTO {
     @Pattern(regexp = "^(\\d{9}[0-9X])|(978\\d{9}[0-9])$", message = "El ISBN debe tener 10 o 13 caracteres")
     @JsonProperty("ISBN")
     private String isbn;
-    
+
     @NotNull(message = "El autor no puede ser nulo")
     @Size(min = 1, max = 30, message = "El autor no debe exdecer los 30 caracteres")
     private String author;
