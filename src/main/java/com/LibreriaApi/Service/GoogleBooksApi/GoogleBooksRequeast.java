@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 @Service
 public class GoogleBooksRequeast {
 
@@ -31,7 +33,18 @@ public class GoogleBooksRequeast {
         return "";
     }
 
+    // OBTIENE EL TITULO, LA DESCRIPCION Y LA EDITORIAL DEL LIBRO EN BASE AL ISBN
+    public Optional<BookInfo> getBookInfoByISBN(String isbn) {
+        JSONObject volumeInfo = getVolumeInfo(isbn);
+        if (volumeInfo != null) {
+            String title = volumeInfo.optString("title", "Título no disponible");
+            String publisher = volumeInfo.optString("publisher", "Editorial no disponible");
+            String releaseDate = volumeInfo.optString("publishedDate", "Fecha no disponible");
 
+            return Optional.of(new BookInfo(title, publisher, releaseDate));
+        }
+        return Optional.empty();
+    }
 
     // METODO PARA OBTENER EL volumeInfo DESDE LA API, CONTIENE TODA LA INFORMACION DEL LIBRO
     private JSONObject getVolumeInfo(String isbn) {
