@@ -31,5 +31,24 @@ public class GoogleBooksRequeast {
         return "";
     }
 
+    // METODO PARA OBTENER EL volumeInfo DESDE LA API, CONTIENE TODA LA INFORMACION DEL LIBRO
+    private JSONObject getVolumeInfo(String isbn) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn + "&key=" + APIKEY;
+            String response = restTemplate.getForObject(url, String.class);
+
+            JSONObject json = new JSONObject(response);
+            JSONArray items = json.optJSONArray("items");
+
+            if (items != null && items.length() > 0) {
+                return items.getJSONObject(0).optJSONObject("volumeInfo");
+            }
+        } catch (Exception e) {
+            System.out.println("Error al obtener datos desde Google Books: " + e.getMessage());
+        }
+        return null;
+    }
+
 
 }
