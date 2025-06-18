@@ -4,6 +4,7 @@ import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Exceptions.ExternalBookNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -104,33 +106,42 @@ public class BookService {
         // TRAIGO UN BookInfo, QUE CONTIENE LA INFORMACION OBTENIDA DE LA API
         Optional<GoogleBooksRequeast.BookInfo> bookInfoOpt = googleApi.getBookInfoByISBN(dto.getIsbn());
         // SI EL BookInfo ESTA VACIO EL METODO ARROJA UNA EXCEPCION
-        /*
-        if (bookInfo.isEmpty()) {
-            throw new IllegalArgumentException("No se encontró información en Google Books para el ISBN: " + dto.getIsbn());
+        if (bookInfoOpt.isEmpty()) {
+            throw new ExternalBookNotFoundException("No se encontró información en Google Books para el ISBN: " + dto.getIsbn());
         }
-        */
+
         // OBTENGO LA URL DE LA PORTADA
         String url = googleApi.getThumbnailByISBN(dto.getIsbn());
         GoogleBooksRequeast.BookInfo info = bookInfoOpt.get();
 
-
         Book book = new Book();
-        // SETEO LOS DATOS QUE VIENEN DEL DTO
-        book.setISBN(dto.getIsbn());
-        book.setCategory(Category.valueOf(dto.getCategory()));
-        book.setAuthor(dto.getAuthor());
-        book.setDescription(dto.getDescription());
-        // SETEO LOS DATOS QUE OBTENGO CON LA API
-        book.setTitle(info.getTitle());
-        book.setPublishingHouse(info.getPublisher());
-        if (info.getDate() != null) {
-            book.setReleaseDate(Date.valueOf(info.getDate()));
-        }
-        book.setUrlImage(url);
-        // SETEO EL ESTADO
-        book.setStatus(true);
+        try {
+            // SETEO LOS DATOS QUE VIENEN DEL DTO
+            book.setISBN(dto.getIsbn());
+            book.setCategory(Category.valueOf(dto.getCategory().toUpperCase()));
+            book.setAuthor(dto.getAuthor());
+            book.setDescription(dto.getDescription());
 
-        return bookRepository.save(book);
+            // SETEO LOS DATOS QUE OBTENGO CON LA API
+            book.setTitle(info.getTitle());
+            book.setPublishingHouse(info.getPublisher());
+
+            if (info.getDate() != null || !info.getDate().trim().isEmpty()) {
+                book.setReleaseDate(Date.valueOf(info.getDate()));
+            }
+
+            book.setUrlImage(url);
+            // SETEO EL ESTADO
+            book.setStatus(true);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error al completar con la informacion de la API");
+        }
+
+        try {
+            return bookRepository.save(book);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("Error de integridad de datos al guardar el libro", e);
+        }
     }
 
     //METODO UPDATE
