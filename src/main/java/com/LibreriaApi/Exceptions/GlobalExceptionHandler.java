@@ -98,4 +98,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(entityNotFound, HttpStatus.CONFLICT);
     }
 
+    // Se lanza cuando la API no encuentra el ISBN ingresado
+    @ExceptionHandler(ExternalBookNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleExternalBookNotFound(ExternalBookNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
 }

@@ -1,11 +1,14 @@
 package com.LibreriaApi.Service;
 
+import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Exceptions.ExternalBookNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
+import com.LibreriaApi.Model.DTO.LoadBookDTO;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;
@@ -14,8 +17,10 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +93,55 @@ public class BookService {
 
         return bookRepository.save(book);
 
+    }
+
+    // USA UN LoadBookDTO PARA COMPLETAR EL RESTO DE LOS DATOS CON LA API
+    // OBTIENE TODOS LOS DATOS EN BASE AL ISBN
+    @Transactional
+    public Book addBookWithAPI(LoadBookDTO dto) {
+        // VALIDO QUE EL ISBN NO ESTE REGISTRADO AÚN
+        if(bookRepository.existsByISBN(dto.getIsbn())){
+            throw new EntityAlreadyExistsException("Ya existe un libro con el ISBN: " + dto.getIsbn());
+        }
+        // TRAIGO UN BookInfo, QUE CONTIENE LA INFORMACION OBTENIDA DE LA API
+        Optional<GoogleBooksRequeast.BookInfo> bookInfoOpt = googleApi.getBookInfoByISBN(dto.getIsbn());
+        // SI EL BookInfo ESTA VACIO EL METODO ARROJA UNA EXCEPCION
+        if (bookInfoOpt.isEmpty()) {
+            throw new ExternalBookNotFoundException("No se encontró información en Google Books para el ISBN: " + dto.getIsbn());
+        }
+
+        // OBTENGO LA URL DE LA PORTADA
+        String url = googleApi.getThumbnailByISBN(dto.getIsbn());
+        GoogleBooksRequeast.BookInfo info = bookInfoOpt.get();
+
+        Book book = new Book();
+        try {
+            // SETEO LOS DATOS QUE VIENEN DEL DTO
+            book.setISBN(dto.getIsbn());
+            book.setCategory(Category.valueOf(dto.getCategory().toUpperCase()));
+            book.setAuthor(dto.getAuthor());
+            book.setDescription(dto.getDescription());
+
+            // SETEO LOS DATOS QUE OBTENGO CON LA API
+            book.setTitle(info.getTitle());
+            book.setPublishingHouse(info.getPublisher());
+
+            if (info.getDate() != null || !info.getDate().trim().isEmpty()) {
+                book.setReleaseDate(Date.valueOf(info.getDate()));
+            }
+
+            book.setUrlImage(url);
+            // SETEO EL ESTADO
+            book.setStatus(true);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error al completar con la informacion de la API");
+        }
+
+        try {
+            return bookRepository.save(book);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("Error de integridad de datos al guardar el libro", e);
+        }
     }
 
     //METODO UPDATE
