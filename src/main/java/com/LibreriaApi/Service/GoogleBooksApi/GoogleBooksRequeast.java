@@ -14,17 +14,10 @@ public class GoogleBooksRequeast {
     //@Value("$(api.key)")
     private static String APIKEY = "AIzaSyBHYBfwtqrFU4Whru9dxqHD9xWgh6skA68";
 
+    // OBTIENE LA URL DEL THUMBNAIL DEL LIBRO
     public String getThumbnailByISBN(String isbn) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn + "&key=" + APIKEY;
-
-        String response = restTemplate.getForObject(url, String.class);
-
-        JSONObject json = new JSONObject(response);
-        JSONArray items = json.optJSONArray("items");
-
-        if (items != null && items.length() > 0) {
-            JSONObject volumeInfo = items.getJSONObject(0).getJSONObject("volumeInfo");
+        JSONObject volumeInfo = getVolumeInfo(isbn);
+        if (volumeInfo != null) {
             JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
             if (imageLinks != null) {
                 return imageLinks.optString("thumbnail", "Sin imagen");
