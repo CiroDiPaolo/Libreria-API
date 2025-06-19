@@ -200,6 +200,10 @@ public class BookCrudController {
                     @ApiResponse(
                             responseCode = "403",
                             description = "No tiene permisos para realizar esta operación."
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Ya existe un libro con el mismo ISBN"
                     )
             }
     )
@@ -228,6 +232,10 @@ public class BookCrudController {
                     @ApiResponse(
                             responseCode = "403",
                             description = "No tiene permisos para realizar esta operación."
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Ya existe un libro con el mismo ISBN"
                     )
             }
     )
@@ -254,6 +262,10 @@ public class BookCrudController {
                     @ApiResponse(
                             responseCode = "403",
                             description = "No tiene permisos para realizar esta operación."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Libro no encontrado"
                     )
             }
     )
