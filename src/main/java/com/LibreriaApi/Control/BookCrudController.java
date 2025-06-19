@@ -165,7 +165,7 @@ public class BookCrudController {
             description = "Busca el libro por su ID y hace un soft delete.",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                             description = "Libro dado de baja exitosamente."
                     ),
                     @ApiResponse(
