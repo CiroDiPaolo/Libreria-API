@@ -106,10 +106,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(BookStageNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleBookStageNotFound(BookStageNotFoundException ex) {
-        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
 }
