@@ -220,7 +220,7 @@ public class BookCrudController {
     }
 
     @Operation(
-            summary = "Crear y guardar un libro en la base de datos",
+            summary = "Crear y guardar un libro en la base de datos con ayuda de Google Books API",
             description = "Se introducen datos por formulario y otros datos se obtienen por la API",
             responses = {
                     @ApiResponse(
