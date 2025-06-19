@@ -1,5 +1,6 @@
 package com.LibreriaApi.Exceptions;
 
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -103,6 +104,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExternalBookNotFound(ExternalBookNotFoundException ex) {
         ErrorResponse error = new ErrorResponse(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookStageNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBookStageNotFound(BookStageNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
 }
