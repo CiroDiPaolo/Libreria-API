@@ -151,7 +151,6 @@ public class BookService {
         Book book = bookRepository.findById(idBook)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrada con id: " + idBook));
 
-        book.setStatus(bookDTO.getStatus());
         book.setAuthor(bookDTO.getAuthor());
         book.setTitle(bookDTO.getTitle());
         book.setCategory(bookDTO.getCategory());

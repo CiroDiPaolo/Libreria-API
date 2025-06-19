@@ -1,5 +1,6 @@
 package com.LibreriaApi.Exceptions;
 
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
