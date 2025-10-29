@@ -44,6 +44,7 @@ public class BookCrudController {
             @ApiResponse(responseCode = "404", description = "No se encontraron reseñas con ese ID")
     })
     @GetMapping("/{id}")
+    //DEBERIA TENER PREAUTHORIZE ROLE ADMIN
     public ResponseEntity<Book> getBookById(
             @Parameter(description = "ID del libro a obtener", required = true)
             @PathVariable Long id) {
@@ -77,6 +78,18 @@ public class BookCrudController {
     @GetMapping("/all")
     public List<Book> getAllBooks() {
         return bookService.getAllBooksService();
+    }
+
+    @Operation(
+            summary = "Obtener todos los libros ",
+            description = "Obtiene todos los libros "
+    )
+    @ApiResponse(responseCode = "200", description = "Lista de todos los libros (puede estar vacia)",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = Book.class))))
+    @GetMapping("/all/active")
+    public List<BookDTO> getAllActiveBooks() {
+            return bookService.getAllActiveBooksService();
     }
 
     @Operation(
