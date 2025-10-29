@@ -1,6 +1,7 @@
 package com.LibreriaApi.Repository;
 
 import com.LibreriaApi.Model.Book;
+import com.LibreriaApi.Model.DTO.BookDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +27,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> searchByAuthorLikeIgnoreCase(@Param("author") String author);
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%'))")
     List<Book> searchByPublishinHouseLikeIgnoreCase(@Param("publishingHouse") String publishingHouse);
+    @Query("""
+    SELECT new com.LibreriaApi.Model.DTO.BookDTO(
+        b.id, b.category, b.description, b.releaseDate, b.status,
+        b.ISBN, b.title, b.author, b.publishingHouse, b.urlImage
+    )
+    FROM Book b
+    WHERE b.status = true
+    """)
+    List<BookDTO> findAllActiveBookDTOs();
 
 }

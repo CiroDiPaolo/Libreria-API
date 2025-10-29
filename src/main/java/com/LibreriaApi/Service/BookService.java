@@ -52,6 +52,7 @@ public class BookService {
 
     public List<Book> getAllBooksService() { return bookRepository.findAll(); }
 
+    public List<BookDTO> getAllActiveBooksService(){return bookRepository.findAllActiveBookDTOs();}
     public List<Book> getBooksByTitleService(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
 
     public Book getBooksByISBNService(String isbn) { return bookRepository.findByISBN(isbn)
