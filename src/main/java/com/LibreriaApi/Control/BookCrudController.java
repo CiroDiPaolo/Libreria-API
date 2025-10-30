@@ -80,6 +80,7 @@ public class BookCrudController {
         return bookService.getAllBooksService();
     }
 
+
     @Operation(
             summary = "Obtener todos los libros ",
             description = "Obtiene todos los libros "
@@ -260,5 +261,6 @@ public class BookCrudController {
         Book updatedBook = bookService.updateBookService(id, book);
         return ResponseEntity.ok(updatedBook);
     }
+
 
 }
