@@ -80,6 +80,7 @@ public class BookCrudController {
         return bookService.getAllBooksService();
     }
 
+
     @Operation(
             summary = "Obtener todos los libros ",
             description = "Obtiene todos los libros "
