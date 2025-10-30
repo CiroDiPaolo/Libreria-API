@@ -3,6 +3,7 @@ package com.LibreriaApi.Service;
 import com.LibreriaApi.Config.JwtUtil;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
+import com.LibreriaApi.Model.DTO.UserProfileDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,20 @@ public class UserService {
         }
     }
 
-    //metodos get
+    //METODOS GET
     public UserEntity getUserById(Long id){
 
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
 
+    }
+
+    // MOSTRAR PERFIL DEL USUARIO LOGUEADO
+    public UserProfileDTO getUserProfile(Long id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró usuario con el id: " + id));
+
+        // RETORNO UN UserProfileDTO PARA NO MOSTRAR DATOS COMO id, password, role o status
+        return new UserProfileDTO(user.getUsername(), user.getEmail(), user.getFavoriteList());
     }
 
     public List<UserEntity> getAllUsers(){
@@ -55,14 +65,17 @@ public class UserService {
 
     //metodo delete
     public void deleteUserById(Long id){
-
-        Optional<UserEntity> user = userRepository.findById(getIdUserByToken());
-
-        if(user.isPresent()){
-
-            user.get().setStatus(false);
-
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SI YA ESTA INACTIVO TIRO UNA EXCEPCION
+        if (!user.getStatus()) {
+            throw new IllegalStateException("El usuario ya está inactivo");
         }
+        // SETEO SU ESTADO EN FALSE, LO DOY DE BAJA
+        user.setStatus(false);
+        // GUARDO LOS CAMBIOS
+        userRepository.save(user);
 
     }
 
@@ -84,7 +97,22 @@ public class UserService {
         } else {
             throw new EntityNotFoundException("Usuario no encontrado para actualizar");
         }
+    }
 
+    // DA DE ALTA UN USUARIO QUE SE ENCONTRABA DESACTIVADO
+    public UserEntity activateUserById(Long id){
+        // VALIDO QUE EXISTA EL USUARIO
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrada con id: " + id));
+        // SI YA ESTA ACTIVO TIRO UNA EXCEPCION
+        if (user.getStatus()) {
+            throw new IllegalStateException("El usuario ya está activo");
+        }
+        // SETEO SU ESTADO EN TRUE, LO DOY DE ALTA
+        user.setStatus(true);
+        // GUARDO LOS CAMBIOS Y RETORNO EL USUARIO QUE SE DIO DE ALTA
+        userRepository.save(user);
+        return user;
     }
 
 

@@ -51,8 +51,9 @@ public class UserEntity {
     @JsonManagedReference
     private List<BookStage> favoriteList;
 
+    @NotNull(message = "El estado no puede ser nulo")
     @Column(name = "status")
-    private boolean status = true;
+    private Boolean status;
 
     @Override
     public String toString() {

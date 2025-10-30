@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ReviewCrudService {
+public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -87,17 +87,29 @@ public class ReviewCrudService {
 
     //Metodos DELETE
     @Transactional
-    public void deleteByIdService(Long idReview) {
+    public void deleteByIdServiceUser(Long idReview) {
         Long idUser = userService.getIdUserByToken();
        if(this.checkReviewBelongsToUser(idUser, idReview)){
            reviewRepository.logicallyDeleteById(idReview);
        }
     }
 
+    @Transactional
+    public void deleteByIdService(Long idReview) {
+        if(reviewRepository.existsById(idReview)){
+            reviewRepository.logicallyDeleteById(idReview);
+        }else{
+            throw new EntityNotFoundException("La review con id " + idReview + " no existe");
+        }
+    }
+
     //Metodo POST
     @Transactional
     public ReviewDTO addReviewService(ReviewDTO review) {
         Long idUser = userService.getIdUserByToken();
+        if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, review.getIdMultimedia())){
+            throw new AccessDeniedUserException("El usuario ya tiene una review activa para este contenido");
+        }
         review.setIdUser(idUser);
         review.setStatus(true);
         return this.toDTO(reviewRepository.save(this.toModel(review)));

@@ -15,6 +15,6 @@ public interface BookStageRepository extends JpaRepository<BookStage, Long> {
     List<BookStage> findByStage(String stage);
     List<BookStage> findByStageContaining(String stage);
     List<BookStage> findByStageAndUserId(String stage, Long userId);
-
+    Optional<BookStage> findById(Long id);
     Optional<Object> findByUserAndBook(UserEntity user, Book book);
 }

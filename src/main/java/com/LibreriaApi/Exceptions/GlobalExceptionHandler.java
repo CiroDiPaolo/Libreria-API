@@ -1,10 +1,12 @@
 package com.LibreriaApi.Exceptions;
 
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -70,7 +72,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("Metodo no permitido");
     }
 
-    //Se lanza cuando el usuario no puede acceder al metodo
+    //Se lanza cuando un usuario intenta acceder a realizar acciones con una entidad que no le pertenece
     @ExceptionHandler(AccessDeniedUserException.class)
     public ResponseEntity<?> AccessDeniedUserException(AccessDeniedUserException exception){
         ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
@@ -81,6 +83,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> IllegalArgumentException(IllegalArgumentException exception){
         ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
         return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
+    }
+
+    //Se lanza cuando el usuario no puede acceder al metodo
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> AccessDeniedException(AccessDeniedException exception){
+        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), "El usuario no tiene permisos para acceder a la url");
+        return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
+    }
+
+    //Se lanza cuando la entidad ya existe
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public ResponseEntity<?> EntityAlreadyExistsException(EntityAlreadyExistsException exception){
+        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
+        return new ResponseEntity<>(entityNotFound, HttpStatus.CONFLICT);
+    }
+
+    // Se lanza cuando la API no encuentra el ISBN ingresado
+    @ExceptionHandler(ExternalBookNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleExternalBookNotFound(ExternalBookNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
 }
