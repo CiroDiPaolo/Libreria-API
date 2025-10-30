@@ -9,6 +9,7 @@ import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -89,6 +90,8 @@ public class UserService {
             userEntity.setUsername(userDTO.getUsername());
             userEntity.setEmail(userDTO.getEmail());
             userEntity.setPass(userDTO.getPassword());
+            PasswordEncoder passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+            userEntity.setPass(passwordEncoder.encode(userDTO.getPassword()));
 
             return userRepository.save(userEntity);
         } else {
