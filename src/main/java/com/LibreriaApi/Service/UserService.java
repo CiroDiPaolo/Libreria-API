@@ -90,6 +90,7 @@ public class UserService {
             userEntity.setUsername(userDTO.getUsername());
             userEntity.setEmail(userDTO.getEmail());
             userEntity.setPass(userDTO.getPassword());
+
             PasswordEncoder passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
             userEntity.setPass(passwordEncoder.encode(userDTO.getPassword()));
 
