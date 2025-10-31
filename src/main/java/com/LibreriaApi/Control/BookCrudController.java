@@ -81,10 +81,10 @@ public class BookCrudController {
     }
 
     @Operation(
-            summary = "Obtener todos los libros ",
-            description = "Obtiene todos los libros "
+            summary = "Obtener todos los libros activos ",
+            description = "Obtiene todos los libros activos "
     )
-    @ApiResponse(responseCode = "200", description = "Lista de todos los libros (puede estar vacia)",
+    @ApiResponse(responseCode = "200", description = "Lista de todos los libros activos (puede estar vacia)",
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/all/active")

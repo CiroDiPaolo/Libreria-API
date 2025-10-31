@@ -156,8 +156,9 @@ public class BookService {
         book.setTitle(bookDTO.getTitle());
         book.setCategory(bookDTO.getCategory());
         book.setDescription(bookDTO.getDescription());
-        book.setPublishingHouse(book.getPublishingHouse());
+        book.setPublishingHouse(bookDTO.getPublishingHouse());
         book.setReleaseDate(bookDTO.getReleaseDate());
+        book.setStatus(bookDTO.getStatus());
         return book;
     }
 
