@@ -53,7 +53,10 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/libros/all/active",
-                                "/libros/bookSheet/{id}"
+                                "/libros/bookSheet/",
+                                "/libros/bookSheet/{id}",
+                                "/user/username/",
+                                "/user/username/{idUser}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
