@@ -57,6 +57,12 @@ public class UserService {
         return new UserProfileDTO(user.getUsername(), user.getEmail(), user.getFavoriteList());
     }
 
+    // Obtiene el nombre del usuario segun su Id
+    public String getUsernameById(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el id: " + id));
+        return user.getUsername();
+    }
+
     public List<UserEntity> getAllUsers(){
 
         return userRepository.getAllUsers();
