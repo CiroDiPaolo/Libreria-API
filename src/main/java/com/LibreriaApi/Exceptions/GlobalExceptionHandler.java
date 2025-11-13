@@ -81,8 +81,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> IllegalArgumentException(IllegalArgumentException exception){
-        ErrorResponse entityNotFound = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
-        return new ResponseEntity<>(entityNotFound, HttpStatus.FORBIDDEN);
+        ErrorResponse error = new ErrorResponse(LocalDateTime.now(), exception.getMessage());
+        return ResponseEntity.badRequest().body(error);
     }
 
     //Se lanza cuando el usuario no puede acceder al metodo
