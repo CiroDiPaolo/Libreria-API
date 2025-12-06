@@ -26,7 +26,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/libros")
+@RequestMapping("/books")
 @Tag(name = "Books", description = "Operaciones sobre book (libros)")
 public class BookCrudController {
 
@@ -134,7 +134,7 @@ public class BookCrudController {
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/search/author/{author}")
-    public ResponseEntity<List<Book>> searchBookByAutor(
+    public ResponseEntity<List<Book>> searchBookByAuthor(
             @Parameter(description = "Autor para buscar", required = true)
             @PathVariable String author) {
         return ResponseEntity.ok(bookService.getBooksByAutorService(author));
@@ -148,7 +148,7 @@ public class BookCrudController {
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/search/publishingHouse/{publishingHouse}")
-    public ResponseEntity<List<Book>> searchBookByEditorial(
+    public ResponseEntity<List<Book>> searchBookByPublishingHouse(
             @Parameter(description = "Editorial para buscar", required = true)
             @PathVariable String publishingHouse) {
         return ResponseEntity.ok(bookService.getBooksByPublishingHouseService(publishingHouse));
