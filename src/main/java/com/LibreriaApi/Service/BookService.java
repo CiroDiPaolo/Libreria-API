@@ -1,7 +1,6 @@
 package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Enums.Category;
-import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Exceptions.ExternalBookNotFoundException;
@@ -38,33 +37,33 @@ public class BookService {
 
     //METODOS GET
 
-    public Book getBookByIdService(Long id) {
+    public Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
     }
 
-    public BookWithReviewsDTO getBookWithReviewsService(Long id) {
+    public BookWithReviewsDTO getBookWithReviews(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
 
         return this.toBookWithReviewsDTO(book);
     }
 
-    public List<Book> getAllBooksService() { return bookRepository.findAll(); }
+    public List<Book> getAllBooks() { return bookRepository.findAll(); }
 
-    public List<BookDTO> getAllActiveBooksService(){return bookRepository.findAllActiveBookDTOs();}
-    public List<Book> getBooksByTitleService(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
+    public List<BookDTO> getAllActiveBooks(){return bookRepository.findAllActiveBookDTOs();}
+    public List<Book> getBooksByTitle(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
 
-    public Book getBooksByISBNService(String isbn) { return bookRepository.findByISBN(isbn)
+    public Book getBooksByISBN(String isbn) { return bookRepository.findByISBN(isbn)
             .orElseThrow(()-> new EntityNotFoundException("El libro con ISBN " + isbn + " no existe.")); }
 
-    public List<Book> getBooksByAutorService(String author) { return bookRepository.searchByAuthorLikeIgnoreCase(author); }
+    public List<Book> getBooksByAuthor(String author) { return bookRepository.searchByAuthorLikeIgnoreCase(author); }
 
-    public List<Book> getBooksByPublishingHouseService(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
+    public List<Book> getBooksByPublishingHouse(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
 
     //METODOS DELETE
     @Transactional
-    public void deleteBookService(Long id) {
+    public void deleteBook(Long id) {
         if (bookRepository.existsById(id)) {
             bookRepository.logicallyDeleteById(id);
         } else {
@@ -74,7 +73,7 @@ public class BookService {
 
     //METODO ADD
     @Transactional
-    public Book addBookService(BookDTO dto) {
+    public Book addBook(BookDTO dto) {
         if(bookRepository.existsByISBN(dto.getISBN())){
             throw new EntityAlreadyExistsException("Ya existe un libro con el ISBN: " + dto.getISBN());
         }
@@ -147,7 +146,7 @@ public class BookService {
 
     //METODO UPDATE
     @Transactional
-    public Book updateBookService(Long idBook,BookDTO bookDTO) {
+    public Book updateBook(Long idBook, BookDTO bookDTO) {
 
         Book book = bookRepository.findById(idBook)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrada con id: " + idBook));

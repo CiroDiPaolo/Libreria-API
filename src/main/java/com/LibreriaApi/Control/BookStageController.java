@@ -1,6 +1,5 @@
 package com.LibreriaApi.Control;
 
-import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +41,7 @@ public class BookStageController {
     public ResponseEntity<BookStage> createBookStage(
             @Parameter(description = "ID del libro a agregar a favoritos", required = true)
             @PathVariable Long idBook) {
-        return ResponseEntity.ok(bookStageService.createService(idBook));
+        return ResponseEntity.ok(bookStageService.createBookStage(idBook));
     }
 
     @Operation(
@@ -75,7 +73,7 @@ public class BookStageController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/all")
     public ResponseEntity<List<BookStage>> getAllBookStageOfUser() {
-        return ResponseEntity.ok(bookStageService.getAllBookStageOfUserService());
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfUser());
     }
 
     @Operation(
@@ -91,7 +89,7 @@ public class BookStageController {
     public ResponseEntity<List<BookStage>> getAllBookStageOfAUser(
             @Parameter(description = "ID del usuario del cual se desea obtener la lista", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(bookStageService.getAllBookStageOfAUserService(id));
+        return ResponseEntity.ok(bookStageService.getAllBookStageOfAUser(id));
     }
 
     @Operation(

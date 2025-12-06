@@ -1,6 +1,5 @@
 package com.LibreriaApi.Service;
 
-import com.LibreriaApi.Control.BookCrudController;
 import com.LibreriaApi.Enums.Stage;
 import com.LibreriaApi.Exceptions.BookStageNotFoundException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
@@ -30,14 +29,11 @@ public class BookStageService {
     private UserRepository userRepository;
 
     @Autowired
-    private BookCrudController bookCrudController;
-
-    @Autowired
     private BookRepository bookRepository;
 
     // POST
     @Transactional
-    public BookStage createService(Long id) {
+    public BookStage createBookStage(Long id) {
         Long userId = userService.getIdUserByToken();
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + userId));
@@ -64,13 +60,13 @@ public class BookStageService {
     }
 
     @Transactional
-    public List<BookStage> getAllBookStageOfUserService() {
+    public List<BookStage> getAllBookStageOfUser() {
         Long idUser = userService.getIdUserByToken();
         return bookStageRepository.findByUserId(idUser);
     }
 
     @Transactional
-    public List<BookStage> getAllBookStageOfAUserService(Long id) {
+    public List<BookStage> getAllBookStageOfAUser(Long id) {
         return bookStageRepository.findByUserId(id);
     }
 

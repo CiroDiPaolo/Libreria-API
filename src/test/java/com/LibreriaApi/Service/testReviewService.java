@@ -4,7 +4,6 @@ import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
-import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookRepository;
@@ -87,7 +86,7 @@ public class testReviewService {
         when(reviewRepository.findById(testReviewId)).thenReturn(Optional.of(testReview));
 
         // When
-        ReviewDTO result = reviewService.getReviewByIdService(testReviewId);
+        ReviewDTO result = reviewService.getReviewById(testReviewId);
 
         // Then
         // Aca voy a forzar que falle
@@ -106,7 +105,7 @@ public class testReviewService {
 
         // When & Then
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> reviewService.getReviewByIdService(testReviewId)
+                () -> reviewService.getReviewById(testReviewId)
         );
         assertEquals("Review no encontrada con id: " + testReviewId, exception.getMessage());
     }
@@ -120,7 +119,7 @@ public class testReviewService {
         when(reviewRepository.findByMultimedia_Id(testBookId)).thenReturn(reviews);
 
         // When
-        List<ReviewDTO> result = reviewService.getAllReviewsOfABookService(testBookId);
+        List<ReviewDTO> result = reviewService.getAllReviewsOfABook(testBookId);
 
         // Then
         assertNotNull(result);
@@ -138,7 +137,7 @@ public class testReviewService {
 
         // When & Then
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> reviewService.getAllReviewsOfABookService(testBookId)
+                () -> reviewService.getAllReviewsOfABook(testBookId)
         );
         assertEquals("Libro no encontrado con id: " + testBookId, exception.getMessage());
     }
@@ -152,7 +151,7 @@ public class testReviewService {
         when(reviewRepository.findByMultimediaIdAndStatusTrue(testBookId)).thenReturn(activeReviews);
 
         // When
-        List<ReviewDTO> result = reviewService.getAllActiveReviewsOfABookService(testBookId);
+        List<ReviewDTO> result = reviewService.getAllActiveReviewsOfABook(testBookId);
 
         // Then
         assertNotNull(result);
@@ -224,7 +223,7 @@ public class testReviewService {
         when(reviewRepository.existsById(1L)).thenReturn(true);
 
         // Act
-        reviewService.deleteByIdService(1L);
+        reviewService.deleteById(1L);
 
         // Assert
         verify(reviewRepository).logicallyDeleteById(1L);
@@ -239,7 +238,7 @@ public class testReviewService {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> reviewService.deleteByIdService(999L)
+                () -> reviewService.deleteById(999L)
         );
         assertEquals("La review con id 999 no existe", exception.getMessage());
         verify(reviewRepository, never()).logicallyDeleteById(anyLong());
@@ -259,7 +258,7 @@ public class testReviewService {
         when(reviewRepository.save(any(Review.class))).thenReturn(testReview);
 
         // Act
-        ReviewDTO result = reviewService.addReviewService(testReviewDTO);
+        ReviewDTO result = reviewService.addReview(testReviewDTO);
 
         // Assert
         assertNotNull(result);
@@ -282,7 +281,7 @@ public class testReviewService {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> reviewService.addReviewService(testReviewDTO)
+                () -> reviewService.addReview(testReviewDTO)
         );
         assertEquals("Multimedia no encontrado con id: 999", exception.getMessage());
         verify(reviewRepository, never()).save(any(Review.class));
@@ -299,7 +298,7 @@ public class testReviewService {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> reviewService.addReviewService(testReviewDTO)
+                () -> reviewService.addReview(testReviewDTO)
         );
         assertEquals("Usuario no encontrado con id: 999", exception.getMessage());
         verify(reviewRepository, never()).save(any(Review.class));
@@ -316,7 +315,7 @@ public class testReviewService {
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
 
         // Act
-        ReviewDTO result = reviewService.updateReviewService(1L, updateDTO);
+        ReviewDTO result = reviewService.updateReview(1L, updateDTO);
 
         // Assert
         assertNotNull(result);
@@ -337,7 +336,7 @@ public class testReviewService {
         // Act & Assert
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> reviewService.updateReviewService(999L, updateDTO)
+                () -> reviewService.updateReview(999L, updateDTO)
         );
         assertEquals("Review no encontrada id = 999", exception.getMessage());
     }
@@ -360,7 +359,7 @@ public class testReviewService {
         // Act & Assert
         AccessDeniedUserException exception = assertThrows(
                 AccessDeniedUserException.class,
-                () -> reviewService.updateReviewService(1L, updateDTO)
+                () -> reviewService.updateReview(1L, updateDTO)
         );
         assertEquals("La review no corresponde a su usuario", exception.getMessage());
     }
@@ -377,7 +376,7 @@ public class testReviewService {
         // Act & Assert
         AccessDeniedUserException exception = assertThrows(
                 AccessDeniedUserException.class,
-                () -> reviewService.updateReviewService(1L, updateDTO)
+                () -> reviewService.updateReview(1L, updateDTO)
         );
         assertEquals("La reseña esta eliminada", exception.getMessage());
     }

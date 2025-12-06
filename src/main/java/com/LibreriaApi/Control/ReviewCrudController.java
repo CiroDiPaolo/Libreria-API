@@ -45,7 +45,7 @@ public class ReviewCrudController {
     public ResponseEntity<ReviewDTO> getReviewById(
             @Parameter(description = "ID de la reseña a obtener", required = true)
             @PathVariable Long id) {
-        ReviewDTO review = reviewService.getReviewByIdService(id);
+        ReviewDTO review = reviewService.getReviewById(id);
         return ResponseEntity.ok(review);
     }
 
@@ -63,14 +63,14 @@ public class ReviewCrudController {
     public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(
             @Parameter(description = "ID del libro para obtener sus reseñas", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllReviewsOfABookService(id));
+        return ResponseEntity.ok(reviewService.getAllReviewsOfABook(id));
     }
 
     @GetMapping("/active/{id}")
     public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(
             @Parameter(description = "ID del libro para obtener reseñas activas", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllActiveReviewsOfABookService(id));
+        return ResponseEntity.ok(reviewService.getAllActiveReviewsOfABook(id));
     }
 
     @GetMapping("/userReview/{id}")
@@ -116,7 +116,7 @@ public class ReviewCrudController {
             @Parameter(description = "ID de la reseña a eliminar (admin)", required = true)
             @PathVariable Long id) {
 
-        reviewService.deleteByIdService(id);
+        reviewService.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -138,7 +138,7 @@ public class ReviewCrudController {
                             schema = @Schema(implementation = ReviewDTO.class))
             )
             @Valid @RequestBody ReviewDTO review) {
-        ReviewDTO createdReview = reviewService.addReviewService(review);
+        ReviewDTO createdReview = reviewService.addReview(review);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdReview.getIdReview())
@@ -166,7 +166,7 @@ public class ReviewCrudController {
             )
             @Valid @RequestBody ReviewDTO reviewDTO) {
 
-        ReviewDTO updatedReview = reviewService.updateReviewService(id, reviewDTO);
+        ReviewDTO updatedReview = reviewService.updateReview(id, reviewDTO);
         return ResponseEntity.ok(updatedReview);
     }
 }

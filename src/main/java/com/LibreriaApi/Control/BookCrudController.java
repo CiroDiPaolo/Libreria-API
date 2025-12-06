@@ -4,7 +4,6 @@ import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
 import com.LibreriaApi.Model.DTO.LoadBookDTO;
-import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,7 +47,7 @@ public class BookCrudController {
     public ResponseEntity<Book> getBookById(
             @Parameter(description = "ID del libro a obtener", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookByIdService(id));
+        return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @Operation(
@@ -65,7 +64,7 @@ public class BookCrudController {
     public ResponseEntity<BookWithReviewsDTO> getBookSheet(
             @Parameter(description = "ID del libro para obtener ficha con reviews", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookWithReviewsService(id));
+        return ResponseEntity.ok(bookService.getBookWithReviews(id));
     }
 
     @Operation(
@@ -77,7 +76,7 @@ public class BookCrudController {
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/all")
     public List<Book> getAllBooks() {
-        return bookService.getAllBooksService();
+        return bookService.getAllBooks();
     }
 
 
@@ -90,7 +89,7 @@ public class BookCrudController {
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/all/active")
     public List<BookDTO> getAllActiveBooks() {
-            return bookService.getAllActiveBooksService();
+            return bookService.getAllActiveBooks();
     }
 
     @Operation(
@@ -104,7 +103,7 @@ public class BookCrudController {
     public ResponseEntity<List<Book>> searchBookByTitle(
             @Parameter(description = "Título para buscar", required = true)
             @PathVariable String title) {
-        return ResponseEntity.ok(bookService.getBooksByTitleService(title));
+        return ResponseEntity.ok(bookService.getBooksByTitle(title));
     }
 
     @Operation(
@@ -123,7 +122,7 @@ public class BookCrudController {
     public ResponseEntity<Book> searchBookByISBN(
             @Parameter(description = "ISBN para buscar", required = true)
             @PathVariable String isbn) {
-        return ResponseEntity.ok(bookService.getBooksByISBNService(isbn));
+        return ResponseEntity.ok(bookService.getBooksByISBN(isbn));
     }
 
     @Operation(
@@ -137,7 +136,7 @@ public class BookCrudController {
     public ResponseEntity<List<Book>> searchBookByAuthor(
             @Parameter(description = "Autor para buscar", required = true)
             @PathVariable String author) {
-        return ResponseEntity.ok(bookService.getBooksByAutorService(author));
+        return ResponseEntity.ok(bookService.getBooksByAuthor(author));
     }
 
     @Operation(
@@ -151,7 +150,7 @@ public class BookCrudController {
     public ResponseEntity<List<Book>> searchBookByPublishingHouse(
             @Parameter(description = "Editorial para buscar", required = true)
             @PathVariable String publishingHouse) {
-        return ResponseEntity.ok(bookService.getBooksByPublishingHouseService(publishingHouse));
+        return ResponseEntity.ok(bookService.getBooksByPublishingHouse(publishingHouse));
     }
 
     @Operation(
@@ -168,7 +167,7 @@ public class BookCrudController {
     public ResponseEntity<Void> deleteBook(
             @Parameter(description = "ID del libro a eliminar", required = true)
             @PathVariable Long id) {
-        bookService.deleteBookService(id);
+        bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -195,7 +194,7 @@ public class BookCrudController {
                     )
             )
             @Valid @RequestBody BookDTO book) {
-        Book newBook = bookService.addBookService(book);
+        Book newBook = bookService.addBook(book);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newBook.getId())
@@ -258,7 +257,7 @@ public class BookCrudController {
             )
             @Valid @RequestBody BookDTO book) {
 
-        Book updatedBook = bookService.updateBookService(id, book);
+        Book updatedBook = bookService.updateBook(id, book);
         return ResponseEntity.ok(updatedBook);
     }
 

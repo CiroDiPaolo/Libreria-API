@@ -38,21 +38,21 @@ public class ReviewService {
 
     //Metodos GET
 
-    public ReviewDTO getReviewByIdService(Long id) {
+    public ReviewDTO getReviewById(Long id) {
 
         return this.toDTO(reviewRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id)));
 
 
     }
 
-    public List<ReviewDTO> getAllReviewsOfABookService(Long bookId) {
+    public List<ReviewDTO> getAllReviewsOfABook(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
         return reviewRepository.findByMultimedia_Id(bookId).stream().map(this::toDTO).toList();
     }
 
-    public List<ReviewDTO> getAllActiveReviewsOfABookService(Long bookId) {
+    public List<ReviewDTO> getAllActiveReviewsOfABook(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
@@ -95,7 +95,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteByIdService(Long idReview) {
+    public void deleteById(Long idReview) {
         if(reviewRepository.existsById(idReview)){
             reviewRepository.logicallyDeleteById(idReview);
         }else{
@@ -105,7 +105,7 @@ public class ReviewService {
 
     //Metodo POST
     @Transactional
-    public ReviewDTO addReviewService(ReviewDTO review) {
+    public ReviewDTO addReview(ReviewDTO review) {
         Long idUser = userService.getIdUserByToken();
         if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, review.getIdMultimedia())){
             throw new AccessDeniedUserException("El usuario ya tiene una review activa para este contenido");
@@ -118,7 +118,7 @@ public class ReviewService {
     //Meteodo PUT
 
     @Transactional
-    public ReviewDTO updateReviewService(Long idReview,ReviewDTO reviewDTO) {
+    public ReviewDTO updateReview(Long idReview, ReviewDTO reviewDTO) {
         Long idUser = userService.getIdUserByToken();
         this.checkReviewBelongsToUser(idUser, idReview);
 
