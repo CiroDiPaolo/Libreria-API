@@ -4,6 +4,7 @@ import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Exceptions.ExternalBookNotFoundException;
+import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
@@ -34,6 +35,8 @@ public class BookService {
     private GoogleBooksRequeast googleApi;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private ReviewMapper reviewMapper;
 
     //METODOS GET
 
@@ -164,7 +167,7 @@ public class BookService {
     public BookWithReviewsDTO toBookWithReviewsDTO(Book book) {
         List<ReviewDTO> reviewDTOs = book.getReviews().stream()
                 .filter(Review::getStatus)
-                .map(review -> reviewService.toDTO(review))
+                .map(review -> reviewMapper.toDTO(review))
                 .toList();
 
         BookWithReviewsDTO dto = new BookWithReviewsDTO();
