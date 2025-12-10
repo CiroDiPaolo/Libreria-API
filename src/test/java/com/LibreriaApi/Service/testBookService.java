@@ -2,6 +2,7 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
@@ -37,6 +38,8 @@ public class testBookService {
     private GoogleBooksRequeast googleApi;
     @Mock
     private ReviewService reviewService;
+    @Mock
+    private ReviewMapper reviewMapper;
     // SERVICE QUE QUIERO TESTEAR
     @InjectMocks
     private BookService bookService;
@@ -137,7 +140,7 @@ public class testBookService {
     void getBookWithReviewsService_WhenBookExists_ShouldReturnBookWithReviewsDTO() {
         // Given
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
         BookWithReviewsDTO result = bookService.getBookWithReviews(1L);
@@ -149,7 +152,7 @@ public class testBookService {
         assertNotNull(result.getReviewsDTO());
         assertEquals(1, result.getReviewsDTO().size());
         verify(bookRepository).findById(1L);
-        verify(reviewService).toDTO(review);
+        verify(reviewMapper).toDTO(review);
     }
 
     // OBTIENE UN LIBRO CON SUS REVIEWS CUANDO EL LIBRO NO EXISTE
@@ -405,7 +408,7 @@ public class testBookService {
     @Test
     void toBookWithReviewsDTO_ShouldConvertBookToDTO() {
         // Given
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
         BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
@@ -418,7 +421,7 @@ public class testBookService {
         assertNotNull(result.getReviewsDTO());
         assertEquals(1, result.getReviewsDTO().size());
         assertNull(result.getReviews());
-        verify(reviewService).toDTO(review);
+        verify(reviewMapper).toDTO(review);
     }
 
     // VALIDA QUE LAS REVIEWS INACTIVAS NO SE AGREGUEN AL BookWithReviewsDTO
@@ -430,7 +433,7 @@ public class testBookService {
         inactiveReview.setStatus(false);
 
         book.setReviews(Arrays.asList(review, inactiveReview));
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
         BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
@@ -438,8 +441,8 @@ public class testBookService {
         // Then
         assertNotNull(result);
         assertEquals(1, result.getReviewsDTO().size());
-        verify(reviewService, times(1)).toDTO(review);
-        verify(reviewService, never()).toDTO(inactiveReview);
+        verify(reviewMapper, times(1)).toDTO(review);
+        verify(reviewMapper, never()).toDTO(inactiveReview);
     }
 
 }
