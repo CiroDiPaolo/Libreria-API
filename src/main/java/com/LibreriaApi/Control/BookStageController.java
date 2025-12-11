@@ -1,5 +1,6 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Enums.Stage;
 import com.LibreriaApi.Model.BookStage;
 import com.LibreriaApi.Model.DTO.BookStageDTO;
 import com.LibreriaApi.Service.BookStageService;
@@ -141,11 +142,12 @@ public class BookStageController {
             }
     )
     @PreAuthorize("hasRole('USER')")
-    @PutMapping
+    @PutMapping("/{idBook}")
     public ResponseEntity<BookStage> updateBookStage(
             @Parameter(description = "DTO con el nuevo estado de lectura del libro", required = true)
-            @RequestBody BookStageDTO bookStageDTO) {
-        return ResponseEntity.ok(bookStageService.updateBookStage(bookStageDTO));
+            @PathVariable Long idBook
+            @RequestBody Stage newStage) {
+        return ResponseEntity.ok(bookStageService.updateBookStage(idBook, newStage));
     }
 
 }
