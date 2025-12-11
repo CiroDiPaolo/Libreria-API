@@ -144,8 +144,8 @@ public class BookStageController {
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{idBook}")
     public ResponseEntity<BookStage> updateBookStage(
-            @Parameter(description = "DTO con el nuevo estado de lectura del libro", required = true)
-            @PathVariable Long idBook
+            //@Parameter(description = "DTO con el nuevo estado de lectura del libro", required = true)
+            @PathVariable Long idBook,
             @RequestBody Stage newStage) {
         return ResponseEntity.ok(bookStageService.updateBookStage(idBook, newStage));
     }
