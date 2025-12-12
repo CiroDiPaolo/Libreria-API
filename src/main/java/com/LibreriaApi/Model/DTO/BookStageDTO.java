@@ -21,9 +21,11 @@ public class BookStageDTO {
     @Positive(message = "El ID de libro debe ser positivo")
     private Long idBook;
 
+    /*
     @NotBlank(message = "El id del usuario no puede ser nulo")
     @Positive(message = "El ID de libro debe ser positivo")
     private Long idUser;
+    */
 
     @NotNull(message = "El estado del libro no puede ser nulo")
     @Enumerated(EnumType.STRING)
