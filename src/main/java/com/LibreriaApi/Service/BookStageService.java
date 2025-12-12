@@ -110,21 +110,21 @@ public class BookStageService {
 
     // PUT
     @Transactional
-    public BookStage updateBookStage(Long idBook, Stage newStage) {
+    public BookStage updateBookStage(BookStageDTO dto) {
         Long userId = userService.getIdUserByToken();
 
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + userId));
 
         // BUSCO EL BookStage QUE COINCIDA CON EL USUARIO Y EL LIBRO
-        BookStage bookStage = bookStageRepository.findByUserIdAndBookId(userId, idBook)
-                .orElseThrow(() -> new BookStageNotFoundException("BookStage no encontrado con el id del libro: " + idBook));
+        BookStage bookStage = bookStageRepository.findByUserIdAndBookId(userId, dto.getIdBook())
+                .orElseThrow(() -> new BookStageNotFoundException("BookStage no encontrado con el id del libro: " + dto.getIdBook()));
 
-        if (bookStage.getStage() == newStage) {
+        if (bookStage.getStage() == dto.getStage()) {
             throw new EntityNotFoundException("El stage no fue modificado");
         }
 
-        bookStage.setStage(newStage);
+        bookStage.setStage(dto.getStage());
 
         return bookStageRepository.save(bookStage);
     }
