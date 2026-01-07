@@ -2,6 +2,7 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
@@ -28,35 +29,32 @@ public class ReviewService {
     private BookRepository bookRepository;
 
     @Autowired
-    private MultimediaRepository multimediaRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReviewMapper reviewMapper;
 
     //Metodos GET
 
-    public ReviewDTO getReviewByIdService(Long id) {
+    public ReviewDTO getReviewById(Long id) {
 
-        return this.toDTO(reviewRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id)));
+        return reviewMapper.toDTO(reviewRepository.findById(id) .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + id)));
 
 
     }
 
-    public List<ReviewDTO> getAllReviewsOfABookService(Long bookId) {
+    public List<ReviewDTO> getAllReviewsOfABook(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimedia_Id(bookId).stream().map(this::toDTO).toList();
+        return reviewRepository.findByMultimedia_Id(bookId).stream().map(reviewMapper::toDTO).toList();
     }
 
-    public List<ReviewDTO> getAllActiveReviewsOfABookService(Long bookId) {
+    public List<ReviewDTO> getAllActiveReviewsOfABook(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimediaIdAndStatusTrue(bookId).stream().map(this::toDTO).toList();
+        return reviewRepository.findByMultimediaIdAndStatusTrue(bookId).stream().map(reviewMapper::toDTO).toList();
     }
 
     public ReviewDTO getReviewByUserAndBookAndStatusTrue(Long bookId) {
@@ -66,7 +64,7 @@ public class ReviewService {
         Long idUser = userService.getIdUserByToken();
         Optional<Review> review = reviewRepository.findByMultimediaIdAndUserIdAndStatusTrue(bookId, idUser);
         if (review.isPresent()){
-            return this.toDTO(review.get());
+            return reviewMapper.toDTO(review.get());
         }else{
             throw new EntityNotFoundException("El usuario no tiene review del libro " + bookId);
         }
@@ -79,7 +77,7 @@ public class ReviewService {
         Long idUser = userService.getIdUserByToken();
         Optional<Review> review = reviewRepository.findByMultimediaIdAndUserId(bookId, idUser);
         if (review.isPresent()){
-            return this.toDTO(review.get());
+            return reviewMapper.toDTO(review.get());
         }else{
             throw new EntityNotFoundException("El usuario no tiene review del libro " + bookId);
         }
@@ -95,7 +93,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteByIdService(Long idReview) {
+    public void deleteById(Long idReview) {
         if(reviewRepository.existsById(idReview)){
             reviewRepository.logicallyDeleteById(idReview);
         }else{
@@ -105,20 +103,20 @@ public class ReviewService {
 
     //Metodo POST
     @Transactional
-    public ReviewDTO addReviewService(ReviewDTO review) {
+    public ReviewDTO addReview(ReviewDTO review) {
         Long idUser = userService.getIdUserByToken();
         if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, review.getIdMultimedia())){
             throw new AccessDeniedUserException("El usuario ya tiene una review activa para este contenido");
         }
         review.setIdUser(idUser);
         review.setStatus(true);
-        return this.toDTO(reviewRepository.save(this.toModel(review)));
+        return reviewMapper.toDTO(reviewRepository.save(this.reviewMapper.toModel(review)));
     }
 
     //Meteodo PUT
 
     @Transactional
-    public ReviewDTO updateReviewService(Long idReview,ReviewDTO reviewDTO) {
+    public ReviewDTO updateReview(Long idReview, ReviewDTO reviewDTO) {
         Long idUser = userService.getIdUserByToken();
         this.checkReviewBelongsToUser(idUser, idReview);
 
@@ -131,7 +129,7 @@ public class ReviewService {
         review.setContent(reviewDTO.getContent());
         review.setRating(reviewDTO.getRating());
 
-        return this.toDTO(review);
+        return reviewMapper.toDTO(review);
     }
 
     public boolean checkReviewBelongsToUser(Long idUser, Long idReview){
@@ -147,33 +145,5 @@ public class ReviewService {
         }
     }
 
-    public ReviewDTO toDTO (Review review){
-        return new ReviewDTO(
-                review.getIdReview(),
-                review.getRating(),
-                review.getContent(),
-                review.getStatus(),
-                review.getUser().getId(),
-                review.getMultimedia().getId()
-        );
-    }
-
-    public Review toModel (ReviewDTO reviewDTO){
-        Long idMultimedia = reviewDTO.getIdMultimedia();
-        Multimedia multimedia = multimediaRepository.findById(idMultimedia)
-                .orElseThrow(() -> new EntityNotFoundException("Multimedia no encontrado con id: " + idMultimedia));
-
-        Long idUser = reviewDTO.getIdUser();
-        UserEntity user = userRepository.findById(idUser)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + idUser));
-        return new Review(
-                reviewDTO.getIdReview(),
-                reviewDTO.getRating(),
-                reviewDTO.getContent(),
-                reviewDTO.getStatus(),
-                user,
-                multimedia
-        );
-    }
 }
 

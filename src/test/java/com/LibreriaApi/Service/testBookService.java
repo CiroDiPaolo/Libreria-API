@@ -2,6 +2,7 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
+import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
@@ -18,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +38,8 @@ public class testBookService {
     private GoogleBooksRequeast googleApi;
     @Mock
     private ReviewService reviewService;
+    @Mock
+    private ReviewMapper reviewMapper;
     // SERVICE QUE QUIERO TESTEAR
     @InjectMocks
     private BookService bookService;
@@ -109,7 +111,7 @@ public class testBookService {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         // When
-        Book result = bookService.getBookByIdService(1L);
+        Book result = bookService.getBookById(1L);
 
         // Then
         assertNotNull(result);
@@ -127,7 +129,7 @@ public class testBookService {
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.getBookByIdService(1L)
+                () -> bookService.getBookById(1L)
         );
         assertEquals("Libro no encontrado con id: 1", exception.getMessage());
         verify(bookRepository).findById(1L);
@@ -138,10 +140,10 @@ public class testBookService {
     void getBookWithReviewsService_WhenBookExists_ShouldReturnBookWithReviewsDTO() {
         // Given
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
-        BookWithReviewsDTO result = bookService.getBookWithReviewsService(1L);
+        BookWithReviewsDTO result = bookService.getBookWithReviews(1L);
 
         // Then
         assertNotNull(result);
@@ -150,7 +152,7 @@ public class testBookService {
         assertNotNull(result.getReviewsDTO());
         assertEquals(1, result.getReviewsDTO().size());
         verify(bookRepository).findById(1L);
-        verify(reviewService).toDTO(review);
+        verify(reviewMapper).toDTO(review);
     }
 
     // OBTIENE UN LIBRO CON SUS REVIEWS CUANDO EL LIBRO NO EXISTE
@@ -162,7 +164,7 @@ public class testBookService {
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.getBookWithReviewsService(1L)
+                () -> bookService.getBookWithReviews(1L)
         );
         assertEquals("Libro no encontrado con id: 1", exception.getMessage());
         verify(bookRepository).findById(1L);
@@ -176,7 +178,7 @@ public class testBookService {
         when(bookRepository.findAll()).thenReturn(books);
 
         // When
-        List<Book> result = bookService.getAllBooksService();
+        List<Book> result = bookService.getAllBooks();
 
         // Then
         assertNotNull(result);
@@ -194,7 +196,7 @@ public class testBookService {
         when(bookRepository.searchByTitleLikeIgnoreCase(title)).thenReturn(books);
 
         // When
-        List<Book> result = bookService.getBooksByTitleService(title);
+        List<Book> result = bookService.getBooksByTitle(title);
 
         // Then
         assertNotNull(result);
@@ -204,13 +206,13 @@ public class testBookService {
 
     // OBTIENE UN LIBRO POR SU ISBN CUANDO EL LIBRO EXISTE
     @Test
-    void getBooksByISBNService_WhenBookExists_ShouldReturnBook() {
+    void getBooksByISBN_WhenBookExists_ShouldReturnBook() {
         // Given
         String isbn = "978-3-16-148410-0";
         when(bookRepository.findByISBN(isbn)).thenReturn(Optional.of(book));
 
         // When
-        Book result = bookService.getBooksByISBNService(isbn);
+        Book result = bookService.getBooksByISBN(isbn);
 
         // Then
         assertNotNull(result);
@@ -220,7 +222,7 @@ public class testBookService {
 
     // OBTIENE UN LIBRO POR SU ISBN CUANDO EL LIBRO NO EXISTE
     @Test
-    void getBooksByISBNService_WhenBookNotExists_ShouldThrowException() {
+    void getBooksByISBN_WhenBookNotExists_ShouldThrowException() {
         // Given
         String isbn = "978-3-16-148410-0";
         when(bookRepository.findByISBN(isbn)).thenReturn(Optional.empty());
@@ -228,7 +230,7 @@ public class testBookService {
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.getBooksByISBNService(isbn)
+                () -> bookService.getBooksByISBN(isbn)
         );
         assertEquals("El libro con ISBN " + isbn + " no existe.", exception.getMessage());
         verify(bookRepository).findByISBN(isbn);
@@ -243,7 +245,7 @@ public class testBookService {
         when(bookRepository.searchByAuthorLikeIgnoreCase(author)).thenReturn(books);
 
         // When
-        List<Book> result = bookService.getBooksByAutorService(author);
+        List<Book> result = bookService.getBooksByAuthor(author);
 
         // Then
         assertNotNull(result);
@@ -260,7 +262,7 @@ public class testBookService {
         when(bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse)).thenReturn(books);
 
         // When
-        List<Book> result = bookService.getBooksByPublishingHouseService(publishingHouse);
+        List<Book> result = bookService.getBooksByPublishingHouse(publishingHouse);
 
         // Then
         assertNotNull(result);
@@ -277,7 +279,7 @@ public class testBookService {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         // When
-        bookService.deleteBookService(1L);
+        bookService.deleteBook(1L);
 
         // Then
         verify(bookRepository).findById(1L);
@@ -293,7 +295,7 @@ public class testBookService {
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.deleteBookService(1L)
+                () -> bookService.deleteBook(1L)
         );
         assertEquals("El libro no existe", exception.getMessage());
         verify(bookRepository).findById(1L);
@@ -311,7 +313,7 @@ public class testBookService {
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         // When
-        Book result = bookService.addBookService(bookDTO);
+        Book result = bookService.addBook(bookDTO);
 
         // Then
         assertNotNull(result);
@@ -333,7 +335,7 @@ public class testBookService {
         });
 
         // When
-        Book result = bookService.addBookService(bookDTO);
+        Book result = bookService.addBook(bookDTO);
 
         // Then
         assertNotNull(result);
@@ -375,7 +377,7 @@ public class testBookService {
         // When & Then
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.updateBookService(id, bookDTO)
+                () -> bookService.updateBook(id, bookDTO)
         );
         assertEquals("El libro no existe", exception.getMessage());
         verify(bookRepository).findById(book.getId());
@@ -392,7 +394,7 @@ public class testBookService {
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         // When
-        Book result = bookService.addBookService(bookDTO);
+        Book result = bookService.addBook(bookDTO);
 
         // Then
         assertNotNull(result);
@@ -406,7 +408,7 @@ public class testBookService {
     @Test
     void toBookWithReviewsDTO_ShouldConvertBookToDTO() {
         // Given
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
         BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
@@ -419,7 +421,7 @@ public class testBookService {
         assertNotNull(result.getReviewsDTO());
         assertEquals(1, result.getReviewsDTO().size());
         assertNull(result.getReviews());
-        verify(reviewService).toDTO(review);
+        verify(reviewMapper).toDTO(review);
     }
 
     // VALIDA QUE LAS REVIEWS INACTIVAS NO SE AGREGUEN AL BookWithReviewsDTO
@@ -431,7 +433,7 @@ public class testBookService {
         inactiveReview.setStatus(false);
 
         book.setReviews(Arrays.asList(review, inactiveReview));
-        when(reviewService.toDTO(review)).thenReturn(reviewDTO);
+        when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
 
         // When
         BookWithReviewsDTO result = bookService.toBookWithReviewsDTO(book);
@@ -439,8 +441,8 @@ public class testBookService {
         // Then
         assertNotNull(result);
         assertEquals(1, result.getReviewsDTO().size());
-        verify(reviewService, times(1)).toDTO(review);
-        verify(reviewService, never()).toDTO(inactiveReview);
+        verify(reviewMapper, times(1)).toDTO(review);
+        verify(reviewMapper, never()).toDTO(inactiveReview);
     }
 
 }

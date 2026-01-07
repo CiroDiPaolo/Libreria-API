@@ -76,6 +76,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserProfile(id));
     }
 
+    @RequestMapping("/username/{idUser}")
+    public ResponseEntity<String> getUsername(@PathVariable Long idUser) {
+        return ResponseEntity.ok(userService.getUsernameById(idUser));
+    }
+
     @Operation(
             summary = "Obtener todos los usuarios",
             description = "Devuelve la lista de todos los usuarios"

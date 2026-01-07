@@ -52,7 +52,11 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/webjars/**",
-                                "/libros/all/active"
+                                "/books/all/active",
+                                "/books/bookSheet/",
+                                "/books/bookSheet/{id}",
+                                "/user/username/",
+                                "/user/username/{idUser}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
