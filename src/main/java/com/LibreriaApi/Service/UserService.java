@@ -63,6 +63,12 @@ public class UserService {
 
     }
 
+    public UserEntity getUserByEmail(String email){
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("No se encontro usuario con el email: " + email));
+
+    }
+
     //metodo delete
     public void deleteUserById(Long id){
         // VALIDO QUE EXISTA EL USUARIO

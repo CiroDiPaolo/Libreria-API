@@ -90,6 +90,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers()).getBody();
     }
 
+    public ResponseEntity<UserEntity> getUserByEmail(String email){
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
     // MÉTODO DELETE
     @Operation(
             summary = "Da de baja un usuario elegido",
