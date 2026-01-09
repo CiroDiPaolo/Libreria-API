@@ -71,7 +71,7 @@ public class    BookStageController {
                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookStage.class))))
             }
     )
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<BookStage>> getAllBookStageOfUser() {
         return ResponseEntity.ok(bookStageService.getAllBookStageOfUser());
@@ -102,7 +102,7 @@ public class    BookStageController {
                             content = @Content(schema = @Schema(implementation = String.class)))
             }
     )
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookStageOfUserById(
             @Parameter(description = "ID del BookStage a eliminar", required = true)
