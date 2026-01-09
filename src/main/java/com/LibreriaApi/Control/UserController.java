@@ -95,7 +95,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers()).getBody();
     }
 
-    public ResponseEntity<UserEntity> getUserByEmail(String email){
+    @Operation(
+            summary = "Obtener usuario por email",
+            description = "Obtiene un usuario por su email"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+                    content = @Content(schema = @Schema(implementation = UserEntity.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserEntity> getUserByEmail(@PathVariable String email){
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
