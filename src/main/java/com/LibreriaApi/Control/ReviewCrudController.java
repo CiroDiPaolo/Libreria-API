@@ -90,8 +90,8 @@ public class ReviewCrudController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/allReviews/{idUser}")
-    public ResponseEntity<List<ReviewDTO>> getAllReviewsActiveOfUser(@PathVariable Long idUser){
-        return ResponseEntity.ok(reviewService.getAllReviewsActiveOfUser(idUser));
+    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfUser(@PathVariable Long idUser){
+        return ResponseEntity.ok(reviewService.getAllReviewsOfUser(idUser));
     }
 
     // DELETE

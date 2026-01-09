@@ -83,7 +83,7 @@ public class ReviewService {
         }
     }
 
-    public List<ReviewDTO> getAllReviewsActiveOfUser(Long idUser) {
+    public List<ReviewDTO> getAllReviewsOfUser(Long idUser) {
         return reviewRepository
                 .findReviewActiveOfUserById(idUser)
                 .stream()
