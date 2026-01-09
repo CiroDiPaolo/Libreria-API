@@ -88,6 +88,12 @@ public class ReviewCrudController {
         return ResponseEntity.ok(reviewService.getReviewByUserAndBook(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/allReviews/{idUser}")
+    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfUser(@PathVariable Long idUser){
+        return ResponseEntity.ok(reviewService.getAllReviewsOfUser(idUser));
+    }
+
     // DELETE
     @Operation(
             summary = "Eliminar una review por ID",

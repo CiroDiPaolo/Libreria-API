@@ -83,6 +83,14 @@ public class ReviewService {
         }
     }
 
+    public List<ReviewDTO> getAllReviewsOfUser(Long idUser) {
+        return reviewRepository
+                .findReviewActiveOfUserById(idUser)
+                .stream()
+                .map(reviewMapper::toDTO)
+                .toList();
+    }
+
     //Metodos DELETE
     @Transactional
     public void deleteByIdServiceUser(Long idReview) {

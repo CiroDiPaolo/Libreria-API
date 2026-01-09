@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bookstage")
 @Tag(name = "Book Stage (Favourite's List)", description = "Operaciones sobre Book Stage (Lista de favoritos)")
-public class BookStageController {
+public class    BookStageController {
 
     @Autowired
     private BookStageService bookStageService;
