@@ -24,4 +24,6 @@ public interface ReviewRepository extends JpaRepository<Review , Long> {
         Optional<Review> findByMultimediaIdAndUserIdAndStatusTrue(Long idMultimedia, Long idUser);
 
         Optional<Review> findByMultimediaIdAndUserId(Long idMultimedia, Long idUser);
+        @Query("SELECT r FROM Review r WHERE r.user.id = :idUser AND r.status = true")
+        List<Review> findReviewActiveOfUserById(Long idUser);
 }
