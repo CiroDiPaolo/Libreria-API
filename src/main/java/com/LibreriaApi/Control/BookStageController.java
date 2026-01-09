@@ -141,7 +141,7 @@ public class BookStageController {
                             content = @Content(schema = @Schema(implementation = String.class)))
             }
     )
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/{idBook}")
     public ResponseEntity<BookStage> updateBookStage(
             @Parameter(description = "ID del Libro y el Estado actualizado", required = true)
