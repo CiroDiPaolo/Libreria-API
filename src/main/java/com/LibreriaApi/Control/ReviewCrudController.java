@@ -175,4 +175,14 @@ public class ReviewCrudController {
         ReviewDTO updatedReview = reviewService.updateReview(id, reviewDTO);
         return ResponseEntity.ok(updatedReview);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("admin/{id}")
+    public ResponseEntity<ReviewDTO> updateReviewAdmin(
+            @PathVariable Long id,
+            @Valid @RequestBody ReviewDTO request) {
+        ReviewDTO updatedReview = reviewService.updateReviewAdmin(id, request);
+        return ResponseEntity.ok(updatedReview);
+    }
+
 }
