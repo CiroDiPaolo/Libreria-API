@@ -7,6 +7,8 @@ import com.LibreriaApi.Model.DTO.UserProfileDTO;
 import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,10 +65,8 @@ public class UserService {
         return user.getUsername();
     }
 
-    public List<UserEntity> getAllUsers(){
-
-        return userRepository.getAllUsers();
-
+    public Page<UserEntity> findAll(Pageable pageable){
+        return userRepository.findAll(pageable);
     }
 
     public UserEntity getUserByEmail(String email){

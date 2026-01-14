@@ -1,6 +1,8 @@
 package com.LibreriaApi.Repository;
 
 import com.LibreriaApi.Model.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,7 +27,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByUsernameAndEmailAndPass(String username, String email, String pass);
 
-    @Query("SELECT u FROM UserEntity u")
-    List<UserEntity> getAllUsers();
+    Page<UserEntity> findAll(Pageable pageable);
 
 }

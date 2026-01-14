@@ -15,6 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -51,20 +55,20 @@ public class BookCrudController {
     }
 
     @Operation(
-            summary = "Obtener ficha de libro por id (Con reviews activas)",
-            description = "Obtiene libro por id con sus reviews activas"
+            summary = "Obtener ficha de libro por id ",
+            description = "Obtiene libro por id"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ficha de libro obtenida",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookWithReviewsDTO.class))),
+                            schema = @Schema(implementation = BookDTO.class))),
             @ApiResponse(responseCode = "404", description = "Libro inexistente con ese ID")
     })
     @GetMapping("bookSheet/{id}")
-    public ResponseEntity<BookWithReviewsDTO> getBookSheet(
-            @Parameter(description = "ID del libro para obtener ficha con reviews", required = true)
+    public ResponseEntity<BookDTO> getBookSheet(
+            @Parameter(description = "ID del libro para obtener su ficha", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookWithReviews(id));
+        return ResponseEntity.ok(bookService.getBooksheet(id));
     }
 
     @Operation(
@@ -75,21 +79,26 @@ public class BookCrudController {
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/all")
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public Page<Book> getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 15);
+        return bookService.getAllBooks(pageable);
     }
 
-
     @Operation(
-            summary = "Obtener todos los libros activos ",
-            description = "Obtiene todos los libros activos "
+            summary = "Obtener 5 libros activos paginados",
+            description = "Obtiene 5 libros activos paginados, incluye metadata de la página y una lista de BookDTO."
     )
     @ApiResponse(responseCode = "200", description = "Lista de todos los libros activos (puede estar vacia)",
-            content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Book.class))))
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Page.class)
+            ))
     @GetMapping("/all/active")
-    public List<BookDTO> getAllActiveBooks() {
-            return bookService.getAllActiveBooks();
+    public Page<BookDTO> getAllActiveBooks(
+            @RequestParam(value = "page", defaultValue = "0") int page
+    ) {
+            Pageable pageable = PageRequest.of(page, 5);
+            return bookService.getAllActiveBooks(pageable);
     }
 
     @Operation(
