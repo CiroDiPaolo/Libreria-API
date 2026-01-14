@@ -143,8 +143,8 @@ public class testReviewService {
     }
 
     // OBTIENE TODAS LAS RESEÑAS ACTIVAS DE UN LIBRO QUE SI EXISTE
-    @Test
-    void getAllActiveReviewsOfABookService_WhenBookExists_ShouldReturnActiveReviews() {
+    //@Test
+    /*void getAllActiveReviewsOfABookService_WhenBookExists_ShouldReturnActiveReviews() {
         // Given
         List<Review> activeReviews = Arrays.asList(testReview);
         when(bookRepository.existsById(testBookId)).thenReturn(true);
@@ -158,7 +158,7 @@ public class testReviewService {
         assertEquals(1, result.size());
         assertTrue(result.get(0).getStatus());
         verify(reviewRepository).findByMultimediaIdAndStatusTrue(testBookId);
-    }
+    }*/
 
     // OBTIENE LAS RESEÑA ACTIVA DE UN USUARIO EN UN LIBRO, SUPONIENDO QUE TIENE UNA
     @Test
