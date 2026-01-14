@@ -176,12 +176,19 @@ public class ReviewCrudController {
         return ResponseEntity.ok(updatedReview);
     }
 
+    @Operation(
+            summary = "Activar reseña",
+            description = "Cambia el estado de una reseña a true"
+    )
+    @ApiResponse(responseCode = "200", description = "Reseña modificada",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Review.class)))
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("admin/{id}")
-    public ResponseEntity<ReviewDTO> updateReviewAdmin(
-            @PathVariable Long id,
-            @Valid @RequestBody ReviewDTO request) {
-        ReviewDTO updatedReview = reviewService.updateReviewAdmin(id, request);
+    @PutMapping("enable/{idReview}")
+    public ResponseEntity<ReviewDTO> enableReview(
+            @Parameter(description = "ID de la reseña a actualizar", required = true)
+            @PathVariable Long idReview) {
+        ReviewDTO updatedReview = reviewService.enableReview(idReview);
         return ResponseEntity.ok(updatedReview);
     }
 

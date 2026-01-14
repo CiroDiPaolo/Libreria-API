@@ -141,11 +141,11 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewDTO updateReviewAdmin(Long idReview, ReviewDTO reviewDTO) {
+    public ReviewDTO enableReview(Long idReview) {
         Review review = reviewRepository.findById(idReview)
                 .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + idReview));
 
-        review.setStatus(reviewDTO.getStatus());
+        review.setStatus(true);
 
         return reviewMapper.toDTO(review);
     }
