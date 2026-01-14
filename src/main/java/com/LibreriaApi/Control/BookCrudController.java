@@ -55,20 +55,20 @@ public class BookCrudController {
     }
 
     @Operation(
-            summary = "Obtener ficha de libro por id (Con reviews activas)",
-            description = "Obtiene libro por id con sus reviews activas"
+            summary = "Obtener ficha de libro por id ",
+            description = "Obtiene libro por id"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Ficha de libro obtenida",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookWithReviewsDTO.class))),
+                            schema = @Schema(implementation = BookDTO.class))),
             @ApiResponse(responseCode = "404", description = "Libro inexistente con ese ID")
     })
     @GetMapping("bookSheet/{id}")
-    public ResponseEntity<BookWithReviewsDTO> getBookSheet(
-            @Parameter(description = "ID del libro para obtener ficha con reviews", required = true)
+    public ResponseEntity<BookDTO> getBookSheet(
+            @Parameter(description = "ID del libro para obtener su ficha", required = true)
             @PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookWithReviews(id));
+        return ResponseEntity.ok(bookService.getBooksheet(id));
     }
 
     @Operation(
@@ -83,14 +83,15 @@ public class BookCrudController {
         return bookService.getAllBooks();
     }
 
-
     @Operation(
-            summary = "Obtener todos los libros activos ",
-            description = "Obtiene todos los libros activos "
+            summary = "Obtener 5 libros activos paginados",
+            description = "Obtiene 5 libros activos paginados, incluye metadata de la página y una lista de BookDTO."
     )
     @ApiResponse(responseCode = "200", description = "Lista de todos los libros activos (puede estar vacia)",
-            content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Book.class))))
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Page.class)
+            ))
     @GetMapping("/all/active")
     public Page<BookDTO> getAllActiveBooks(
             @RequestParam(value = "page", defaultValue = "0") int page

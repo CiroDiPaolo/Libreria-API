@@ -47,6 +47,11 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
     }
 
+    public BookDTO getBooksheet(Long id) {
+        return bookRepository.findBookSheetById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
+    }
+
     public BookWithReviewsDTO getBookWithReviews(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
