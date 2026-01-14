@@ -63,10 +63,11 @@ public class ReviewCrudController {
             @ApiResponse(responseCode = "404", description = "No se encontraron reseñas para el libro con ese ID")
     })
     @GetMapping("/all/{id}")
-    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(
+    public Page<ReviewDTO> getAllReviewsOfABook(
             @Parameter(description = "ID del libro para obtener sus reseñas", required = true)
-            @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllReviewsOfABook(id));
+            @PathVariable Long id,
+            @RequestParam (value="page", defaultValue="0" )int page) {
+        return reviewService.getAllReviewsOfABook(id, PageRequest.of(page,10));
     }
 
     @GetMapping("/active/{id}")
