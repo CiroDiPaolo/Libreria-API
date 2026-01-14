@@ -41,11 +41,11 @@ public class ReviewService {
 
     }
 
-    public List<ReviewDTO> getAllReviewsOfABook(Long bookId) {
+    public Page<ReviewDTO> getAllReviewsOfABook(Long bookId, Pageable pageable) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimedia_Id(bookId).stream().map(reviewMapper::toDTO).toList();
+        return reviewRepository.findByMultimedia_Id(bookId, pageable).map(reviewMapper::toDTO);
     }
 
     public Page<ReviewDTO> getActiveReviewsOfBook(Long bookId, Pageable pageable) {
