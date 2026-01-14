@@ -13,6 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -67,10 +70,12 @@ public class ReviewCrudController {
     }
 
     @GetMapping("/active/{id}")
-    public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(
-            @Parameter(description = "ID del libro para obtener reseñas activas", required = true)
-            @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllActiveReviewsOfABook(id));
+    public Page<ReviewDTO> getReviews(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return reviewService.getActiveReviewsOfBook(id, pageable);
     }
 
     @GetMapping("/userReview/{id}")
