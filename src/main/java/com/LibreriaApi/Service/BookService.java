@@ -18,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -54,7 +56,7 @@ public class BookService {
 
     public List<Book> getAllBooks() { return bookRepository.findAll(); }
 
-    public List<BookDTO> getAllActiveBooks(){return bookRepository.findAllActiveBookDTOs();}
+    public Page<BookDTO> getAllActiveBooks(Pageable pageable){return bookRepository.findAllActiveBookDTOs(pageable);}
     public List<Book> getBooksByTitle(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
 
     public Book getBooksByISBN(String isbn) { return bookRepository.findByISBN(isbn)
