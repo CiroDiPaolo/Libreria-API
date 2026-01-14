@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -113,20 +115,21 @@ public class testReviewService {
     // OBTIENE TODAS LAS RESEÑAS DE UN LIBRO QUE SI EXISTE, TIENE QUE RETORNAR UNA LISTA CON LAS REVIEW
     @Test
     void getAllReviewsOfABookService_WhenBookExists_ShouldReturnReviewList() {
+
         // Given
         List<Review> reviews = Arrays.asList(testReview);
         when(bookRepository.existsById(testBookId)).thenReturn(true);
-        when(reviewRepository.findByMultimedia_Id(testBookId)).thenReturn(reviews);
+        when(reviewRepository.findByMultimedia_Id(testBookId, PageRequest.of(0,1))).thenReturn((Page<Review>) reviews);
 
         // When
-        List<ReviewDTO> result = reviewService.getAllReviewsOfABook(testBookId);
+        List<ReviewDTO> result = reviewService.getAllReviewsOfABook(testBookId,PageRequest.of(0,1)).getContent();
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(testReviewId, result.get(0).getIdReview());
         verify(bookRepository).existsById(testBookId);
-        verify(reviewRepository).findByMultimedia_Id(testBookId);
+        verify(reviewRepository).findByMultimedia_Id(testBookId, PageRequest.of(0,1));
     }
 
     // OBTENER TODAS LAS RESEÑAS DE UN LIBRO QUE NO EXISTE, TENDRIA QUE ARROJAR UNA EXCEPCION
@@ -137,7 +140,7 @@ public class testReviewService {
 
         // When & Then
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
-                () -> reviewService.getAllReviewsOfABook(testBookId)
+                () -> reviewService.getAllReviewsOfABook(testBookId,PageRequest.of(0,1))
         );
         assertEquals("Libro no encontrado con id: " + testBookId, exception.getMessage());
     }
