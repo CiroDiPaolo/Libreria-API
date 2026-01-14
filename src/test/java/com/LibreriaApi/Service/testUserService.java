@@ -12,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -170,16 +173,16 @@ public class testUserService {
         user2.setId(2L);
         user2.setUsername("user2");
         List<UserEntity> expectedUsers = Arrays.asList(mockUser, user2);
-        when(userRepository.getAllUsers()).thenReturn(expectedUsers);
-
+        //when(userRepository.getAllUsers()).thenReturn(expectedUsers);
+        Pageable pageable = PageRequest.of(0, 2);
         // Act
-        List<UserEntity> result = userService.getAllUsers();
+        List<UserEntity> result = (userService.findAll(pageable)).getContent();
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(expectedUsers, result);
-        verify(userRepository).getAllUsers();
+        //verify(userRepository).getAllUsers();
     }
 
     // TEST PARA METODOS DELETE ///////////////////////////
