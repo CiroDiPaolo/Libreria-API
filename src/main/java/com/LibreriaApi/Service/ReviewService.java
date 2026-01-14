@@ -1,6 +1,7 @@
 package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
+import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
@@ -143,11 +144,19 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewDTO updateReviewAdmin(Long idReview, ReviewDTO reviewDTO) {
+    public ReviewDTO enableReview(Long idReview) {
         Review review = reviewRepository.findById(idReview)
                 .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + idReview));
 
-        review.setStatus(reviewDTO.getStatus());
+        Long idUser = review.getUser().getId();
+        Long idMultimedia = review.getMultimedia().getId();
+
+        // Valido si ya existe una review activa, para que no existan dos
+        if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, idMultimedia)){
+            throw new EntityAlreadyExistsException("El usuario ya tiene una review activa para este contenido.");
+        }
+
+        review.setStatus(true);
 
         return reviewMapper.toDTO(review);
     }
