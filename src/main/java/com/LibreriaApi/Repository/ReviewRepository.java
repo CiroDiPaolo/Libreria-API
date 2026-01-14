@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review , Long> {
 
-        List<Review> findByMultimedia_Id(Long id);
+        Page<Review> findByMultimedia_Id(Long id, Pageable pageable);
         @Modifying
         @Query("update Review r set r.status = false where r.id = :id")
         void logicallyDeleteById(@Param("id") Long id);
