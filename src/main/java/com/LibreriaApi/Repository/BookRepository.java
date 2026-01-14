@@ -19,15 +19,20 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findByISBN(String ISBN);
     Optional<Book> findByAuthor(String author);
     Optional<Book> findBypublishingHouse(String publishingHouse);
+
     @Modifying
     @Query("update Multimedia b set b.status = false where b.id = :id")
     void logicallyDeleteById(@Param("id") Long id);
+
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))")
     List<Book> searchByTitleLikeIgnoreCase(@Param("title") String title);
+
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))")
     List<Book> searchByAuthorLikeIgnoreCase(@Param("author") String author);
+
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%'))")
     List<Book> searchByPublishinHouseLikeIgnoreCase(@Param("publishingHouse") String publishingHouse);
+
     @Query("""
     SELECT new com.LibreriaApi.Model.DTO.BookDTO(
         b.id, b.category, b.description, b.releaseDate, b.status,
@@ -37,5 +42,23 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     WHERE b.status = true
     """)
     Page<BookDTO> findAllActiveBookDTOs(Pageable pageable);
+
+    @Query("""
+    SELECT new com.LibreriaApi.Model.DTO.BookDTO(
+        b.id,
+        b.category,
+        b.description,
+        b.releaseDate,
+        b.status,
+        b.ISBN,
+        b.title,
+        b.author,
+        b.publishingHouse,
+        b.urlImage
+    )
+    FROM Book b
+    WHERE b.id = :id
+""")
+    Optional<BookDTO> findBookSheetById(@Param("id") Long id);
 
 }
