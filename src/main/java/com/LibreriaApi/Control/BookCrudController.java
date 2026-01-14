@@ -79,8 +79,9 @@ public class BookCrudController {
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class))))
     @GetMapping("/all")
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public Page<Book> getAllBooks(@RequestParam(value = "page", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 15);
+        return bookService.getAllBooks(pageable);
     }
 
     @Operation(

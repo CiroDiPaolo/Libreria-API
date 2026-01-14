@@ -19,7 +19,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findByISBN(String ISBN);
     Optional<Book> findByAuthor(String author);
     Optional<Book> findBypublishingHouse(String publishingHouse);
-
+    Page<Book> findAll(Pageable pageable);
     @Modifying
     @Query("update Multimedia b set b.status = false where b.id = :id")
     void logicallyDeleteById(@Param("id") Long id);
