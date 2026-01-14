@@ -4,15 +4,13 @@ import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
-import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
-import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookRepository;
-import com.LibreriaApi.Repository.MultimediaRepository;
 import com.LibreriaApi.Repository.ReviewRepository;
-import com.LibreriaApi.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,11 +48,15 @@ public class ReviewService {
         return reviewRepository.findByMultimedia_Id(bookId).stream().map(reviewMapper::toDTO).toList();
     }
 
-    public List<ReviewDTO> getAllActiveReviewsOfABook(Long bookId) {
+    public Page<ReviewDTO> getActiveReviewsOfBook(Long bookId, Pageable pageable) {
+
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimediaIdAndStatusTrue(bookId).stream().map(reviewMapper::toDTO).toList();
+
+        return reviewRepository
+                .findByMultimedia_IdAndStatusTrue(bookId, pageable)
+                .map(reviewMapper::toDTO);
     }
 
     public ReviewDTO getReviewByUserAndBookAndStatusTrue(Long bookId) {
