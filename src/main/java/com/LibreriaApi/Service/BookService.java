@@ -59,7 +59,7 @@ public class BookService {
         return this.toBookWithReviewsDTO(book);
     }
 
-    public List<Book> getAllBooks() { return bookRepository.findAll(); }
+    public Page<Book> getAllBooks(Pageable pageable) { return bookRepository.findAll(pageable); }
 
     public Page<BookDTO> getAllActiveBooks(Pageable pageable){return bookRepository.findAllActiveBookDTOs(pageable);}
     public List<Book> getBooksByTitle(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
