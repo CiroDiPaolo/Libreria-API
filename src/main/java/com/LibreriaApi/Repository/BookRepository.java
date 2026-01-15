@@ -1,5 +1,6 @@
 package com.LibreriaApi.Repository;
 
+import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import org.springframework.data.domain.Page;
@@ -60,5 +61,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     WHERE b.id = :id
 """)
     Optional<BookDTO> findBookSheetById(@Param("id") Long id);
+
+    List<Book> findByCategory(Category c);
 
 }

@@ -1,5 +1,6 @@
 package com.LibreriaApi.Control;
 
+import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import com.LibreriaApi.Model.DTO.BookWithReviewsDTO;
@@ -146,6 +147,14 @@ public class BookCrudController {
             @Parameter(description = "Autor para buscar", required = true)
             @PathVariable String author) {
         return ResponseEntity.ok(bookService.getBooksByAuthor(author));
+    }
+
+    @GetMapping("/search/category/{category}")
+
+    public ResponseEntity<List<Book>> searchBookByCategory(
+            @Parameter(description = "Categoría para buscar", required = true)
+            @PathVariable Category category) {
+        return ResponseEntity.ok(bookService.getBooksByCategory(category));
     }
 
     @Operation(

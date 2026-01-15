@@ -71,6 +71,8 @@ public class BookService {
 
     public List<Book> getBooksByPublishingHouse(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
 
+    public List<Book> getBooksByCategory(Category category) { return bookRepository.findByCategory(category); }
+
     //METODOS DELETE
     @Transactional
     public void deleteBook(Long id) {
