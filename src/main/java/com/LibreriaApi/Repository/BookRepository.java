@@ -1,5 +1,6 @@
 package com.LibreriaApi.Repository;
 
+import com.LibreriaApi.Enums.Category;
 import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.BookDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,5 +37,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     WHERE b.status = true
     """)
     List<BookDTO> findAllActiveBookDTOs();
+
+    List<Book> findByCategory(Category c);
 
 }
