@@ -56,7 +56,10 @@ public class SecurityConfig {
                                 "/books/bookSheet/",
                                 "/books/bookSheet/{id}",
                                 "/user/username/",
-                                "/user/username/{idUser}"
+                                "/user/username/{idUser}",
+                                "/books/search/author/{author}",
+                                "/books/search/publishingHouse/{publishingHouse}",
+                                "/books/search/category/{category}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
