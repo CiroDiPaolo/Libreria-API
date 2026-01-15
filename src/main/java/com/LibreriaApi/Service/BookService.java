@@ -18,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -45,6 +47,11 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
     }
 
+    public BookDTO getBooksheet(Long id) {
+        return bookRepository.findBookSheetById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
+    }
+
     public BookWithReviewsDTO getBookWithReviews(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));
@@ -52,9 +59,9 @@ public class BookService {
         return this.toBookWithReviewsDTO(book);
     }
 
-    public List<Book> getAllBooks() { return bookRepository.findAll(); }
+    public Page<Book> getAllBooks(Pageable pageable) { return bookRepository.findAll(pageable); }
 
-    public List<BookDTO> getAllActiveBooks(){return bookRepository.findAllActiveBookDTOs();}
+    public Page<BookDTO> getAllActiveBooks(Pageable pageable){return bookRepository.findAllActiveBookDTOs(pageable);}
     public List<Book> getBooksByTitle(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }
 
     public Book getBooksByISBN(String isbn) { return bookRepository.findByISBN(isbn)

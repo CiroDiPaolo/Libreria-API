@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -176,9 +178,9 @@ public class testBookService {
         // Given
         List<Book> books = Arrays.asList(book);
         when(bookRepository.findAll()).thenReturn(books);
-
+        Pageable pageable = PageRequest.of(0,10);
         // When
-        List<Book> result = bookService.getAllBooks();
+        List<Book> result = bookService.getAllBooks(pageable).getContent();
 
         // Then
         assertNotNull(result);

@@ -1,18 +1,17 @@
 package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
+import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Mapper.ReviewMapper;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
-import com.LibreriaApi.Model.Multimedia;
 import com.LibreriaApi.Model.Review;
-import com.LibreriaApi.Model.UserEntity;
 import com.LibreriaApi.Repository.BookRepository;
-import com.LibreriaApi.Repository.MultimediaRepository;
 import com.LibreriaApi.Repository.ReviewRepository;
-import com.LibreriaApi.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,18 +42,22 @@ public class ReviewService {
 
     }
 
-    public List<ReviewDTO> getAllReviewsOfABook(Long bookId) {
+    public Page<ReviewDTO> getAllReviewsOfABook(Long bookId, Pageable pageable) {
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimedia_Id(bookId).stream().map(reviewMapper::toDTO).toList();
+        return reviewRepository.findByMultimedia_Id(bookId, pageable).map(reviewMapper::toDTO);
     }
 
-    public List<ReviewDTO> getAllActiveReviewsOfABook(Long bookId) {
+    public Page<ReviewDTO> getActiveReviewsOfBook(Long bookId, Pageable pageable) {
+
         if (!bookRepository.existsById(bookId)) {
             throw new EntityNotFoundException("Libro no encontrado con id: " + bookId);
         }
-        return reviewRepository.findByMultimediaIdAndStatusTrue(bookId).stream().map(reviewMapper::toDTO).toList();
+
+        return reviewRepository
+                .findByMultimedia_IdAndStatusTrue(bookId, pageable)
+                .map(reviewMapper::toDTO);
     }
 
     public ReviewDTO getReviewByUserAndBookAndStatusTrue(Long bookId) {
@@ -141,11 +144,19 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewDTO updateReviewAdmin(Long idReview, ReviewDTO reviewDTO) {
+    public ReviewDTO enableReview(Long idReview) {
         Review review = reviewRepository.findById(idReview)
                 .orElseThrow(() -> new EntityNotFoundException("Review no encontrada con id: " + idReview));
 
-        review.setStatus(reviewDTO.getStatus());
+        Long idUser = review.getUser().getId();
+        Long idMultimedia = review.getMultimedia().getId();
+
+        // Valido si ya existe una review activa, para que no existan dos
+        if(reviewRepository.existsByUser_IdAndStatusTrueAndMultimedia_Id(idUser, idMultimedia)){
+            throw new EntityAlreadyExistsException("El usuario ya tiene una review activa para este contenido.");
+        }
+
+        review.setStatus(true);
 
         return reviewMapper.toDTO(review);
     }

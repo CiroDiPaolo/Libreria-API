@@ -13,6 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -60,17 +63,20 @@ public class ReviewCrudController {
             @ApiResponse(responseCode = "404", description = "No se encontraron reseñas para el libro con ese ID")
     })
     @GetMapping("/all/{id}")
-    public ResponseEntity<List<ReviewDTO>> getAllReviewsOfABook(
+    public Page<ReviewDTO> getAllReviewsOfABook(
             @Parameter(description = "ID del libro para obtener sus reseñas", required = true)
-            @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllReviewsOfABook(id));
+            @PathVariable Long id,
+            @RequestParam (value="page", defaultValue="0" )int page) {
+        return reviewService.getAllReviewsOfABook(id, PageRequest.of(page,10));
     }
 
     @GetMapping("/active/{id}")
-    public ResponseEntity<List<ReviewDTO>> getAllActiveReviewsOfABook(
-            @Parameter(description = "ID del libro para obtener reseñas activas", required = true)
-            @PathVariable Long id) {
-        return ResponseEntity.ok(reviewService.getAllActiveReviewsOfABook(id));
+    public Page<ReviewDTO> getReviews(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return reviewService.getActiveReviewsOfBook(id, pageable);
     }
 
     @GetMapping("/userReview/{id}")
@@ -176,12 +182,19 @@ public class ReviewCrudController {
         return ResponseEntity.ok(updatedReview);
     }
 
+    @Operation(
+            summary = "Activar reseña",
+            description = "Cambia el estado de una reseña a true"
+    )
+    @ApiResponse(responseCode = "200", description = "Reseña modificada",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Review.class)))
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("admin/{id}")
-    public ResponseEntity<ReviewDTO> updateReviewAdmin(
-            @PathVariable Long id,
-            @Valid @RequestBody ReviewDTO request) {
-        ReviewDTO updatedReview = reviewService.updateReviewAdmin(id, request);
+    @PutMapping("enable/{idReview}")
+    public ResponseEntity<ReviewDTO> enableReview(
+            @Parameter(description = "ID de la reseña a actualizar", required = true)
+            @PathVariable Long idReview) {
+        ReviewDTO updatedReview = reviewService.enableReview(idReview);
         return ResponseEntity.ok(updatedReview);
     }
 
