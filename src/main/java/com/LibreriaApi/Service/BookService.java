@@ -69,9 +69,17 @@ public class BookService {
 
     public List<Book> getBooksByAuthor(String author) { return bookRepository.searchByAuthorLikeIgnoreCase(author); }
 
-    public List<Book> getBooksByPublishingHouse(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
+    public Page<Book> searchBooks(String author, Category category, String publishingHouse,
+                                  Integer fromYear, Integer toYear, Pageable pageable) {
 
-    public List<Book> getBooksByCategory(Category category) { return bookRepository.findByCategory(category); }
+        String a = (author == null || author.isBlank()) ? null : author.trim();
+        Category c = category;
+        String p = (publishingHouse == null || publishingHouse.isBlank()) ? null : publishingHouse.trim();
+
+        return bookRepository.search(a, c, p, fromYear, toYear, pageable);
+    }
+
+    public List<Book> getBooksByPublishingHouse(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
 
     //METODOS DELETE
     @Transactional

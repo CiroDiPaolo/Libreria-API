@@ -19,10 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -136,39 +139,37 @@ public class BookCrudController {
     }
 
     @Operation(
-            summary = "Obtener todos los libros por autor",
-            description = "Obtiene todos los libros por autor"
+            summary = "Buscar libros con múltiples filtros",
+            description = "Permite buscar libros utilizando varios filtros opcionales como autor, categoría, editorial y rango de años de publicación. Los resultados están paginados."
     )
-    @ApiResponse(responseCode = "200", description = "Lista de libros con los autores que coinciden con el ingresado  (puede estar vacia)",
-            content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Book.class))))
-    @GetMapping("/search/author/{author}")
-    public ResponseEntity<List<Book>> searchBookByAuthor(
-            @Parameter(description = "Autor para buscar", required = true)
-            @PathVariable String author) {
-        return ResponseEntity.ok(bookService.getBooksByAuthor(author));
-    }
+    @ApiResponse(responseCode = "200", description = "Lista de libros que coinciden con los filtros proporcionados (puede estar vacía)",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Page.class)
+            ))
+    @GetMapping("/search")
+    public Page<Book> searchBooks(
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String publishingHouse,
+            @RequestParam(required = false) Integer fromYear,
+            @RequestParam(required = false) Integer toYear,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size
+    ) {
+        if (page < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "page must be >= 0");
+        if (size <= 0 || size > 100) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "size must be 1..100");
 
-    @GetMapping("/search/category/{category}")
+        com.LibreriaApi.Enums.Category catEnum = null;
+        if (category != null && !category.isBlank()) {
+            try {
+                catEnum = com.LibreriaApi.Enums.Category.valueOf(category.trim().toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoría inválida: " + category);
+            }
+        }
 
-    public ResponseEntity<List<Book>> searchBookByCategory(
-            @Parameter(description = "Categoría para buscar", required = true)
-            @PathVariable Category category) {
-        return ResponseEntity.ok(bookService.getBooksByCategory(category));
-    }
-
-    @Operation(
-            summary = "Obtener todos los libros por editorial",
-            description = "Obtiene todos los libros por editorial"
-    )
-    @ApiResponse(responseCode = "200", description = "Lista de libros con las editoriales que coinciden con el ingresado  (puede estar vacia)",
-            content = @Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Book.class))))
-    @GetMapping("/search/publishingHouse/{publishingHouse}")
-    public ResponseEntity<List<Book>> searchBookByPublishingHouse(
-            @Parameter(description = "Editorial para buscar", required = true)
-            @PathVariable String publishingHouse) {
-        return ResponseEntity.ok(bookService.getBooksByPublishingHouse(publishingHouse));
+        return bookService.searchBooks(author, catEnum, publishingHouse, fromYear, toYear, PageRequest.of(page, size));
     }
 
     @Operation(
