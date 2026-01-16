@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/books/all/active",
                                 "/books/bookSheet/",
                                 "/books/bookSheet/{id}",
+                                "/review/active/{id}",
                                 "/user/username/",
                                 "/user/username/{idUser}",
                                 "/books/search/author/{author}",
