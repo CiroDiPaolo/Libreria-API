@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,5 +29,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByUsernameAndEmailAndPass(String username, String email, String pass);
 
     Page<UserEntity> findAll(Pageable pageable);
+
+  @Query("""
+      SELECT u FROM UserEntity u
+      WHERE (:username IS NULL OR LOWER(u.username) LIKE CONCAT('%', LOWER(:username), '%'))
+        AND (:active IS NULL OR u.status = :active)
+  """)
+  Page<UserEntity> searchUsers(@Param("username") String username,
+                         @Param("active") Boolean active,
+                         Pageable pageable);
 
 }

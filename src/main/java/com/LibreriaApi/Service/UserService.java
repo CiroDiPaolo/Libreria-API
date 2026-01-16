@@ -75,6 +75,12 @@ public class UserService {
 
     }
 
+    // metodo buscar con filtros
+    public Page<UserEntity> searchUsers(String username, Boolean active, Pageable pageable) {
+        String qUsername = (username == null || username.trim().isEmpty()) ? null : username.trim();
+        return userRepository.searchUsers(qUsername, active, pageable);
+    }
+
     //metodo delete
     public void deleteUserById(Long id){
         // VALIDO QUE EXISTA EL USUARIO
