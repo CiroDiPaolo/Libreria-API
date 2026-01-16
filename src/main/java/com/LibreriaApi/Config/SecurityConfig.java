@@ -60,7 +60,8 @@ public class SecurityConfig {
                                 "/user/username/{idUser}",
                                 "/books/search/author/{author}",
                                 "/books/search/publishingHouse/{publishingHouse}",
-                                "/books/search/category/{category}"
+                                "/books/search/category/{category}",
+                                "/books/search"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

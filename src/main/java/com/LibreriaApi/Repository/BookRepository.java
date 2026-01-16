@@ -28,8 +28,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))")
     List<Book> searchByTitleLikeIgnoreCase(@Param("title") String title);
 
+   @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))")
+   Page<Book> searchByAuthorLikeIgnoreCase(@Param("author") String author, Pageable pageable);
+
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))")
     List<Book> searchByAuthorLikeIgnoreCase(@Param("author") String author);
+
 
     @Query("SELECT b FROM Book b WHERE b.status = true AND LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%'))")
     List<Book> searchByPublishinHouseLikeIgnoreCase(@Param("publishingHouse") String publishingHouse);
@@ -62,6 +66,34 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 """)
     Optional<BookDTO> findBookSheetById(@Param("id") Long id);
 
-    List<Book> findByCategory(Category c);
+    @Query("SELECT b FROM Book b WHERE b.category = :c AND b.status = true")
+    Page<Book> findByCategoryActive(@Param("c") Category c, Pageable pageable);
+
+
+    @Query(value = """
+        SELECT b FROM Book b
+        WHERE (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
+          AND (:category IS NULL OR b.category = :category)
+          AND (:publishingHouse IS NULL OR LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%')))
+          AND (:fromYear IS NULL OR function('year', b.releaseDate) >= :fromYear)
+          AND (:toYear IS NULL OR function('year', b.releaseDate) <= :toYear)
+        """,
+            countQuery = """
+        SELECT COUNT(b) FROM Book b
+        WHERE (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
+          AND (:category IS NULL OR b.category = :category)
+          AND (:publishingHouse IS NULL OR LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%')))
+          AND (:fromYear IS NULL OR function('year', b.releaseDate) >= :fromYear)
+          AND (:toYear IS NULL OR function('year', b.releaseDate) <= :toYear)
+        """
+    )
+    Page<Book> search(
+            @Param("author") String author,
+            @Param("category") Category category,
+            @Param("publishingHouse") String publishingHouse,
+            @Param("fromYear") Integer fromYear,
+            @Param("toYear") Integer toYear,
+            Pageable pageable
+    );
 
 }
