@@ -114,6 +114,19 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
+
+    @GetMapping("/search")
+    public Page<UserEntity> searchUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageRequest pageable = PageRequest.of(Math.max(0, page), Math.max(1, size));
+        return userService.searchUsers(username, active, pageable);
+    }
+
+
     // MÉTODO DELETE
     @Operation(
             summary = "Da de baja un usuario elegido",
