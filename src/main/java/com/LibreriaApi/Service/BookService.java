@@ -19,7 +19,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -60,6 +62,25 @@ public class BookService {
     }
 
     public Page<Book> getAllBooks(Pageable pageable) { return bookRepository.findAll(pageable); }
+
+    public Page<Book> searchAdmin(Integer page, Integer size,
+                                  String title, String author, String category, Boolean active) {
+        int pageNumber = page != null && page >= 0 ? page : 0;
+        int pageSize = size != null && size > 0 ? size : 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").descending());
+
+        return bookRepository.searchAdmin(
+                nullIfBlank(title),
+                nullIfBlank(author),
+                nullIfBlank(category),
+                active,
+                pageable
+        );
+    }
+
+    private String nullIfBlank(String value) {
+        return (value == null || value.isBlank()) ? null : value;
+    }
 
     public Page<BookDTO> getAllActiveBooks(Pageable pageable){return bookRepository.findAllActiveBookDTOs(pageable);}
     public List<Book> getBooksByTitle(String title) { return bookRepository.searchByTitleLikeIgnoreCase(title); }

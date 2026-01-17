@@ -88,6 +88,27 @@ public class BookCrudController {
         return bookService.getAllBooks(pageable);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Buscar libros con múltiples filtros (Admin)",
+            description = "Permite buscar libros utilizando varios filtros opcionales como título, autor, categoría y estado activo/inactivo. Los resultados están paginados."
+    )
+    @ApiResponse(responseCode = "200", description = "Lista de libros que coinciden con los filtros proporcionados (puede estar vacía)",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Page.class)
+            ))
+    @GetMapping("/admin/all")
+    public Page<Book> searchAdmin(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(required = false) Integer size) {
+        return bookService.searchAdmin(page, size, title, author, category, active);
+    }
+
     @Operation(
             summary = "Obtener 5 libros activos paginados",
             description = "Obtiene 5 libros activos paginados, incluye metadata de la página y una lista de BookDTO."
