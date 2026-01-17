@@ -96,4 +96,19 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             Pageable pageable
     );
 
+    @Query("""
+        SELECT b
+        FROM Book b
+        WHERE (:title IS NULL OR UPPER(b.title) LIKE CONCAT('%', UPPER(:title), '%'))
+          AND (:author IS NULL OR UPPER(b.author) LIKE CONCAT('%', UPPER(:author), '%'))
+          AND (:category IS NULL OR UPPER(b.category) = UPPER(:category))
+          AND (:active IS NULL OR b.status = :active)
+        """)
+    Page<Book> searchAdmin(
+            @Param("title") String title,
+            @Param("author") String author,
+            @Param("category") String category,
+            @Param("active") Boolean active,
+            Pageable pageable);
+
 }
