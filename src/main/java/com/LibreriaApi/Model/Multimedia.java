@@ -37,8 +37,8 @@ public abstract class Multimedia {
     private Category category;
 
     @NotBlank(message = "La descripcion no puede estar en blanco")
-    @Size(max = 150, message = "La descripcion no puede exceder los 150 caracteres")
-    @Column(name = "descripcion", length = 150)
+    @Size(max = 1000, message = "La descripcion no puede exceder los 1000 caracteres")
+    @Column(name = "descripcion", length = 1000)
     private String description;
 
     @NotNull(message = "La fecha de lanzamiento no puede ser nula")
