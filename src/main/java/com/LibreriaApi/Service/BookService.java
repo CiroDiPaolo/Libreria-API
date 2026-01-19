@@ -44,6 +44,15 @@ public class BookService {
 
     //METODOS GET
 
+    public Page<Book> searchByTitlePaged(String title, int page, int size) {
+        return bookRepository.findByTitleContainingIgnoreCase(title, PageRequest.of(page, size));
+    }
+
+    public Page<Book> searchByContentPaged(String term, int page, int size) {
+        return bookRepository.findByReviewContent(term, PageRequest.of(page, size));
+
+    }
+
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado con id: " + id));

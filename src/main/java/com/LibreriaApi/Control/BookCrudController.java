@@ -301,5 +301,22 @@ public class BookCrudController {
         return ResponseEntity.ok(updatedBook);
     }
 
+    @GetMapping("/search/title")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Book> searchByTitle(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String title) {
+        return bookService.searchByTitlePaged(title, page, size);
+    }
+
+    @GetMapping("/search/content")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Book> searchByContent(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String term) {
+        return bookService.searchByContentPaged(term, page, size);
+    }
 
 }
