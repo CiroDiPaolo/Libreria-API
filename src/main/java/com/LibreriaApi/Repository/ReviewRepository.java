@@ -1,5 +1,6 @@
 package com.LibreriaApi.Repository;
 
+import com.LibreriaApi.Model.DTO.AdminReviewDTO;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
 import org.springframework.data.domain.Page;

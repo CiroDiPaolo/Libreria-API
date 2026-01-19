@@ -4,6 +4,7 @@ import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Mapper.ReviewMapper;
+import com.LibreriaApi.Model.Book;
 import com.LibreriaApi.Model.DTO.ReviewDTO;
 import com.LibreriaApi.Model.Review;
 import com.LibreriaApi.Repository.BookRepository;

@@ -111,4 +111,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("active") Boolean active,
             Pageable pageable);
 
+    Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    @Query("""
+  SELECT DISTINCT b FROM Book b
+  JOIN b.reviews r
+  WHERE LOWER(r.content) LIKE LOWER(CONCAT('%', :term, '%'))
+""")
+    Page<Book> findByReviewContent(@Param("term") String term, Pageable pageable);
 }
