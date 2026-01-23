@@ -72,7 +72,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query(value = """
         SELECT b FROM Book b
-        WHERE (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
+        WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')))
+          AND (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
           AND (:category IS NULL OR b.category = :category)
           AND (:publishingHouse IS NULL OR LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%')))
           AND (:fromYear IS NULL OR function('year', b.releaseDate) >= :fromYear)
@@ -80,7 +81,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         """,
             countQuery = """
         SELECT COUNT(b) FROM Book b
-        WHERE (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
+        WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) 
+          AND (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
           AND (:category IS NULL OR b.category = :category)
           AND (:publishingHouse IS NULL OR LOWER(b.publishingHouse) LIKE LOWER(CONCAT('%', :publishingHouse, '%')))
           AND (:fromYear IS NULL OR function('year', b.releaseDate) >= :fromYear)
@@ -88,6 +90,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         """
     )
     Page<Book> search(
+            @Param("title") String title,
             @Param("author") String author,
             @Param("category") Category category,
             @Param("publishingHouse") String publishingHouse,
