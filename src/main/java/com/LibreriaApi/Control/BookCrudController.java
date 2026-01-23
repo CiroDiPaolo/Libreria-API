@@ -170,6 +170,7 @@ public class BookCrudController {
             ))
     @GetMapping("/search")
     public Page<Book> searchBooks(
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String publishingHouse,
@@ -190,7 +191,7 @@ public class BookCrudController {
             }
         }
 
-        return bookService.searchBooks(author, catEnum, publishingHouse, fromYear, toYear, PageRequest.of(page, size));
+        return bookService.searchBooks(title, author, catEnum, publishingHouse, fromYear, toYear, PageRequest.of(page, size));
     }
 
     @Operation(

@@ -99,14 +99,15 @@ public class BookService {
 
     public List<Book> getBooksByAuthor(String author) { return bookRepository.searchByAuthorLikeIgnoreCase(author); }
 
-    public Page<Book> searchBooks(String author, Category category, String publishingHouse,
+    public Page<Book> searchBooks(String title, String author, Category category, String publishingHouse,
                                   Integer fromYear, Integer toYear, Pageable pageable) {
 
+        String t = (title == null || title.isBlank()) ? null : title.trim();
         String a = (author == null || author.isBlank()) ? null : author.trim();
         Category c = category;
         String p = (publishingHouse == null || publishingHouse.isBlank()) ? null : publishingHouse.trim();
 
-        return bookRepository.search(a, c, p, fromYear, toYear, pageable);
+        return bookRepository.search(t, a, c, p, fromYear, toYear, pageable);
     }
 
     public List<Book> getBooksByPublishingHouse(String publishingHouse) { return bookRepository.searchByPublishinHouseLikeIgnoreCase(publishingHouse); }
