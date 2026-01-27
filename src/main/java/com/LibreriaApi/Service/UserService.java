@@ -93,7 +93,7 @@ public class UserService {
             throw new IllegalStateException("El usuario ya está inactivo");
         }
 
-        if(!user.getRole().equals("ADMIN")){
+        if(user.getRole().equals("ADMIN")){
             throw new IllegalArgumentException("No se puede dar de baja a un admin");
         }
         // SETEO SU ESTADO EN FALSE, LO DOY DE BAJA
