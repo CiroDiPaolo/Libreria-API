@@ -1,6 +1,7 @@
 package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Config.JwtUtil;
+import com.LibreriaApi.Exceptions.AccessDeniedUserException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.DTO.UserProfileDTO;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,6 +91,10 @@ public class UserService {
         // SI YA ESTA INACTIVO TIRO UNA EXCEPCION
         if (!user.getStatus()) {
             throw new IllegalStateException("El usuario ya está inactivo");
+        }
+
+        if(!user.getRole().equals("ADMIN")){
+            throw new IllegalArgumentException("No se puede dar de baja a un admin");
         }
         // SETEO SU ESTADO EN FALSE, LO DOY DE BAJA
         user.setStatus(false);
