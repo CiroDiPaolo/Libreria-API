@@ -170,6 +170,7 @@ public class BookCrudController {
             ))
     @GetMapping("/search")
     public Page<Book> searchBooks(
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String publishingHouse,
@@ -190,7 +191,7 @@ public class BookCrudController {
             }
         }
 
-        return bookService.searchBooks(author, catEnum, publishingHouse, fromYear, toYear, PageRequest.of(page, size));
+        return bookService.searchBooks(title, author, catEnum, publishingHouse, fromYear, toYear, PageRequest.of(page, size));
     }
 
     @Operation(
@@ -301,5 +302,22 @@ public class BookCrudController {
         return ResponseEntity.ok(updatedBook);
     }
 
+    @GetMapping("/search/title")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Book> searchByTitle(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String title) {
+        return bookService.searchByTitlePaged(title, page, size);
+    }
+
+    @GetMapping("/search/content")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Book> searchByContent(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String term) {
+        return bookService.searchByContentPaged(term, page, size);
+    }
 
 }
