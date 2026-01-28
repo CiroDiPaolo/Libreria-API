@@ -38,6 +38,7 @@ public class    BookStageController {
                             content = @Content(schema = @Schema(implementation = String.class)))
             }
     )
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/{idBook}")
     public ResponseEntity<BookStage> createBookStage(
             @Parameter(description = "ID del libro a agregar a favoritos", required = true)
@@ -71,7 +72,7 @@ public class    BookStageController {
                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookStage.class))))
             }
     )
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/all")
     public ResponseEntity<List<BookStage>> getAllBookStageOfUser() {
         return ResponseEntity.ok(bookStageService.getAllBookStageOfUser());
@@ -102,7 +103,7 @@ public class    BookStageController {
                             content = @Content(schema = @Schema(implementation = String.class)))
             }
     )
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBookStageOfUserById(
             @Parameter(description = "ID del BookStage a eliminar", required = true)
@@ -141,7 +142,7 @@ public class    BookStageController {
                             content = @Content(schema = @Schema(implementation = String.class)))
             }
     )
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{idBook}")
     public ResponseEntity<BookStage> updateBookStage(
             @Parameter(description = "ID del Libro y el Estado actualizado", required = true)
