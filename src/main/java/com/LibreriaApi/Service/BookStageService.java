@@ -62,12 +62,12 @@ public class BookStageService {
     @Transactional
     public List<BookStage> getAllBookStageOfUser() {
         Long idUser = userService.getIdUserByToken();
-        return bookStageRepository.findByUserId(idUser);
+        return bookStageRepository.findByUser_IdAndBook_StatusTrue(idUser);
     }
 
     @Transactional
     public List<BookStage> getAllBookStageOfAUser(Long id) {
-        return bookStageRepository.findByUserId(id);
+        return bookStageRepository.findByUser_IdAndBook_StatusTrue(id);
     }
 
     // DELETE
@@ -86,11 +86,6 @@ public class BookStageService {
         // LO REMUEVO DE LA LISTA
         user.getFavoriteList().remove(bookStage);
         userRepository.save(user);
-    }
-
-    @Transactional
-    public void deleteBookStageOfAUserById(Long id) {
-        deleteBookStageOfUserById(id);
     }
 
     @Transactional
@@ -128,30 +123,5 @@ public class BookStageService {
 
         return bookStageRepository.save(bookStage);
     }
-
-    /*
-    @Transactional
-    public BookStage updateBookStage(BookStageDTO bookStageDTO) {
-        UserEntity user = userRepository.findById(bookStageDTO.getIdUser())
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id: " + bookStageDTO.getIdUser()));
-        BookStage bookStage = bookStageRepository.findByBookId(bookStageDTO.getIdBook())
-                .orElseThrow(() -> new EntityNotFoundException("BookStage no encontrado con el id del libro: " + bookStageDTO.getIdBook()));
-
-        if (!user.getFavoriteList().contains(bookStage)) {
-            throw new EntityNotFoundException("El usuario no contiene este libro");
-        }
-
-        if (bookStage.getStage() == bookStageDTO.getStage()) {
-            throw new EntityNotFoundException("El stage no fue modificado");
-        }
-
-        bookStage.setBook(
-                bookRepository.findById(bookStageDTO.getIdBook())
-                        .orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"))
-        );
-        bookStage.setStage(bookStageDTO.getStage());
-        return bookStageRepository.save(bookStage);
-    }
-    */
 
 }
