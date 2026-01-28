@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface BookStageRepository extends JpaRepository<BookStage, Long> {
     Optional<BookStage> findByUserIdAndBookId(Long userId, Long bookId);
-    List<BookStage> findByUserId(Long userId);
+    List<BookStage> findByUser_IdAndBook_StatusTrue(Long userId);
     Optional<BookStage> findByBookId(Long bookId);
     List<BookStage> findByStage(String stage);
     List<BookStage> findByStageContaining(String stage);
