@@ -33,18 +33,18 @@ public class Book extends Multimedia{
     private String ISBN;
 
     @NotNull(message = "El titulo no puede ser nulo")
-    @Size(min = 1, max = 100, message = "El titulo no debe exdecer los 100 caracteres")
-    @Column(name = "title",length = 100)
+    @Size(min = 1, max = 150, message = "El titulo no debe exdecer los 100 caracteres")
+    @Column(name = "title",length = 150)
     private String title;
 
     @NotNull(message = "El autor no puede ser nulo")
-    @Size(min = 1, max = 30, message = "El autor no debe exdecer los 30 caracteres")
-    @Column(name = "author",length = 30)
+    @Size(min = 1, max = 150, message = "El autor no debe exdecer los 30 caracteres")
+    @Column(name = "author",length = 150)
     private String author;
 
     @NotNull(message = "La editorial no puede ser nula")
-    @Size(min = 1, max = 60, message = "La editorial no debe exdecer los 60 caracteres")
-    @Column(name = "publishingHouse",length = 60)
+    @Size(min = 1, max = 150, message = "La editorial no debe exdecer los 60 caracteres")
+    @Column(name = "publishingHouse",length = 150)
     private String publishingHouse;
 
     @JsonIgnore
