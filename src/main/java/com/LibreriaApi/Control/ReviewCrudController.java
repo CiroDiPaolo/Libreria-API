@@ -142,6 +142,7 @@ public class ReviewCrudController {
     @ApiResponse(responseCode = "200", description = "Reseña agregada",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ReviewDTO.class)))
+    @PreAuthorize("hasRole('USER')")
     @PostMapping()
     public ResponseEntity<ReviewDTO> addReview(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
