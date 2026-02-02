@@ -2,6 +2,7 @@ package com.LibreriaApi.Service;
 
 import com.LibreriaApi.Config.JwtUtil;
 import com.LibreriaApi.Exceptions.AccessDeniedUserException;
+import com.LibreriaApi.Exceptions.EntityAlreadyExistsException;
 import com.LibreriaApi.Exceptions.EntityNotFoundException;
 import com.LibreriaApi.Model.DTO.UserEntityDTO;
 import com.LibreriaApi.Model.DTO.UserProfileDTO;
@@ -109,8 +110,12 @@ public class UserService {
         Optional<UserEntity> userO = userRepository.findById(getIdUserByToken());
 
         if (userO.isPresent()) {
-
             UserEntity userEntity = userO.get();
+            if(!userEntity.getEmail().equals(userDTO.getEmail())){
+                if(userRepository.existsByEmail(userDTO.getEmail())){
+                    throw new EntityAlreadyExistsException("El email ya existe");
+                }
+            }
             userEntity.setUsername(userDTO.getUsername());
             userEntity.setEmail(userDTO.getEmail());
             userEntity.setPass(userDTO.getPassword());
