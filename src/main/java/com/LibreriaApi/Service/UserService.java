@@ -29,6 +29,9 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Long getIdUserByToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -107,26 +110,29 @@ public class UserService {
     //metodo post
    public UserEntity updateUser(UserEntityDTO userDTO){
 
-        Optional<UserEntity> userO = userRepository.findById(getIdUserByToken());
+        UserEntity userEntity = userRepository.findById(getIdUserByToken())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para actualizar"));
 
-        if (userO.isPresent()) {
-            UserEntity userEntity = userO.get();
-            if(!userEntity.getEmail().equals(userDTO.getEmail())){
-                if(userRepository.existsByEmail(userDTO.getEmail())){
-                    throw new EntityAlreadyExistsException("El email ya existe");
-                }
+        // Valido que el email no este en uso
+        if(!userDTO.getEmail().equals(userEntity.getEmail())) {
+            if(userRepository.existsByEmail(userDTO.getEmail())) {
+                throw new EntityAlreadyExistsException("El email ingresado ya esta en uso");
             }
-            userEntity.setUsername(userDTO.getUsername());
-            userEntity.setEmail(userDTO.getEmail());
-            userEntity.setPass(userDTO.getPassword());
-
-            PasswordEncoder passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-            userEntity.setPass(passwordEncoder.encode(userDTO.getPassword()));
-
-            return userRepository.save(userEntity);
-        } else {
-            throw new EntityNotFoundException("Usuario no encontrado para actualizar");
         }
+
+        // Valido que el username no este en uso
+        if(!userDTO.getUsername().equals(userEntity.getUsername())) {
+            if (userRepository.existsByUsername(userDTO.getUsername())) {
+                throw new EntityAlreadyExistsException("El nombre de usuario ya esta en uso");
+            }
+        }
+
+        // Actualizo los campos
+        userEntity.setUsername(userDTO.getUsername());
+        userEntity.setEmail(userDTO.getEmail());
+        userEntity.setPass(passwordEncoder.encode(userDTO.getPassword())); // Encripto la contraseña
+
+        return userRepository.save(userEntity);
     }
 
     // DA DE ALTA UN USUARIO QUE SE ENCONTRABA DESACTIVADO
